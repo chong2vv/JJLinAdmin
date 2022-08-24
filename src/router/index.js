@@ -56,6 +56,30 @@ export const constantRoutes = [
   },
 
   {
+    path: '/message',
+    component: Layout,
+    name: '信息',
+    meta: {
+      title: '信息',
+      icon: 'nested'
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'Message',
+        component: () => import('@/views/message/index'),
+        meta: { title: 'Message', icon: 'form' }
+      },
+      {
+        path: 'index',
+        name: 'Message',
+        component: () => import('@/views/message/index'),
+        meta: { title: 'Message', icon: 'form' }
+      }
+    ]
+  },
+
+  {
     path: '/example',
     component: Layout,
     redirect: '/example/table',
