@@ -58,23 +58,38 @@ export const constantRoutes = [
   {
     path: '/message',
     component: Layout,
-    name: '信息',
-    meta: {
-      title: '信息',
-      icon: 'nested'
-    },
     children: [
       {
         path: 'index',
-        name: 'Message',
+        name: 'message',
         component: () => import('@/views/message/index'),
-        meta: { title: 'Message', icon: 'form' }
-      },
+        meta: { title: '信息', icon: 'email' }
+      }
+    ]
+  },
+
+  {
+    path: '/goods',
+    component: Layout,
+    children: [
       {
         path: 'index',
-        name: 'Message',
-        component: () => import('@/views/message/index'),
-        meta: { title: 'Message', icon: 'form' }
+        name: 'complex-table',
+        component: () => import('@/views/goods/complex-table'),
+        meta: { title: '商品', icon: 'shopping' }
+      }
+    ]
+  },
+
+  {
+    path: '/plan',
+    component: Layout,
+    children: [
+      {
+        path: 'inline-edit-table',
+        name: 'plan',
+        component: () => import('@/views/plan/inline-edit-table'),
+        meta: { title: '商品', icon: 'shopping' }
       }
     ]
   },
