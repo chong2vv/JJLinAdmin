@@ -14,7 +14,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="150px" label="类名">
+      <el-table-column min-width="80px" label="类名">
         <template slot-scope="{row}">
           <template v-if="row.edit">
             <el-input v-model="row.title" class="edit-input" size="small" />
@@ -32,7 +32,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="300px" label="备注">
+      <el-table-column min-width="120px" label="备注">
         <template slot-scope="{row}">
           <template v-if="row.edit">
             <el-input v-model="row.remark" class="edit-input" size="small" />
@@ -50,7 +50,14 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="Actions" width="120">
+      <el-table-column align="center" label="操作" width="200">
+        <template slot-scope="{row}">
+          <el-tag v-if="row.status === 'published'" type="success" effect="dark">使用中</el-tag>
+          <el-tag v-if="row.status === 'draft'" type="danger" effect="dark">已禁用</el-tag>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="操作" width="200">
         <template slot-scope="{row}">
           <el-button
             v-if="row.edit"

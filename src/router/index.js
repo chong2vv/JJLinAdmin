@@ -108,7 +108,7 @@ export const constantRoutes = [
     component: Layout,
     children: [
       {
-        path: 'inline-edit-table',
+        path: 'classify',
         name: 'plan',
         component: () => import('@/views/classify/classify'),
         meta: { title: '分类', icon: 'table' }
