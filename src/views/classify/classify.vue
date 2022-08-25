@@ -70,6 +70,12 @@
           >
             Edit
           </el-button>
+          <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
+            Publish
+          </el-button>
+          <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
+            Draft
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -195,6 +201,10 @@ export default {
       this.temp.title = row.title
       this.temp.remark = row.remark
       this.updateData()
+      this.$message({
+        message: 'The title has been edited',
+        type: 'success'
+      })
     },
     handleCreate() {
       this.resetTemp()
@@ -203,6 +213,10 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
+    },
+    handleModifyStatus(row, status) {
+      this.temp = Object.assign({}, row) // copy obj
+      this.temp.status = status
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -225,7 +239,6 @@ export default {
     updateData() {
       console.log('进到updata')
       this.$refs['dataForm'].validate((valid) => {
-        console.log('emmm， 不是这个？')
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
