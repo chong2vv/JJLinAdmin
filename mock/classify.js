@@ -82,5 +82,16 @@ module.exports = [
         data: 'success'
       }
     }
+  },
+
+  {
+    url: '/vue-admin-template/classify/op',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 20000,
+        data: 'success'
+      }
+    }
   }
 ]

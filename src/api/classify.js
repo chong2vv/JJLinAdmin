@@ -31,3 +31,11 @@ export function updateClassify(data) {
     data
   })
 }
+
+export function opClassify(data) {
+  return request({
+    url: '/vue-admin-template/classify/op',
+    method: 'post',
+    data
+  })
+}
