@@ -14,7 +14,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="300px" label="类名">
+      <el-table-column min-width="150px" label="类名">
         <template slot-scope="{row}">
           <template v-if="row.edit">
             <el-input v-model="row.title" class="edit-input" size="small" />
@@ -29,6 +29,24 @@
             </el-button>
           </template>
           <span v-else>{{ row.title }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column min-width="300px" label="备注">
+        <template slot-scope="{row}">
+          <template v-if="row.edit">
+            <el-input v-model="row.remark" class="edit-input" size="small" />
+            <el-button
+              class="cancel-btn"
+              size="small"
+              icon="el-icon-refresh"
+              type="warning"
+              @click="cancelEdit(row)"
+            >
+              cancel
+            </el-button>
+          </template>
+          <span v-else>{{ row.remark }}</span>
         </template>
       </el-table-column>
 
@@ -74,7 +92,7 @@
         <el-button @click="dialogFormVisible = false">
           Cancel
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='新增分类'?createData():updateData()">
+        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
           Confirm
         </el-button>
       </div>
@@ -93,7 +111,7 @@
 </template>
 
 <script>
-import { fetchList, createArticle, updateArticle } from '@/api/article'
+import { fetchList, createClassify, updateClassify } from '@/api/classify'
 
 export default {
   name: 'InlineEditTable',
@@ -119,7 +137,7 @@ export default {
         id: undefined,
         title: '',
         status: '启用',
-        remake: ''
+        remark: ''
       },
       textMap: {
         update: 'Edit',
@@ -148,6 +166,7 @@ export default {
       this.list = items.map(v => {
         this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
         v.originalTitle = v.title //  will be used when user click the cancel botton
+        v.originalRemark = v.remark
         return v
       })
       this.listLoading = false
@@ -169,12 +188,13 @@ export default {
       })
     },
     confirmEdit(row) {
+      this.temp = Object.assign({}, row) // copy obj
       row.edit = false
       row.originalTitle = row.title
-      this.$message({
-        message: 'The title has been edited',
-        type: 'success'
-      })
+      row.originalRemark = row.remark
+      this.temp.title = row.title
+      this.temp.remark = row.remark
+      this.updateData()
     },
     handleCreate() {
       this.resetTemp()
@@ -189,7 +209,7 @@ export default {
         if (valid) {
           this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           this.temp.author = 'vue-element-admin'
-          createArticle(this.temp).then(() => {
+          createClassify(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
@@ -203,11 +223,13 @@ export default {
       })
     },
     updateData() {
+      console.log('进到updata')
       this.$refs['dataForm'].validate((valid) => {
+        console.log('emmm， 不是这个？')
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
+          updateClassify(tempData).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false

@@ -29,7 +29,7 @@
             <div class="postInfo-container">
               <el-row>
                 <el-col :span="8">
-                  <el-form-item label-width="60px" label="Author:" class="postInfo-container-item">
+                  <el-form-item label-width="60px" label="分类:" class="postInfo-container-item">
                     <el-select v-model="postForm.author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="Search user">
                       <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item" :value="item" />
                     </el-select>
@@ -54,8 +54,8 @@
           </el-col>
         </el-row>
 
-        <el-form-item xml:space="xml:space" label-width="100px" label="商品描述:">
-          <el-input v-model="postForm.content_short" :rows="1" type="textarea" class="article-textarea" autosize placeholder="Please enter the content" />
+        <el-form-item label="商品描述:">
+          <el-input v-model="postForm.content_short" type="textarea" :autosize="{ minRows: 3, maxRows: 6}" placeholder="编辑内容" />
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}words</span>
         </el-form-item>
 
@@ -86,7 +86,8 @@ const defaultForm = {
   manufacturer: 'test', // 制造商
   materials: '', // 材料
   availability: '', // 库存
-  choose_size: '', // 可选尺寸
+  choose_size: [], // 可选尺寸
+  classify: [], // 分类
   available_colors: '', // 可选颜色
   source_uri: '', // 文章外链
   image_uri: '', // 文章图片

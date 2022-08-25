@@ -72,6 +72,7 @@ export const constantRoutes = [
     path: '/goods',
     component: Layout,
     name: 'Goods',
+    redirect: '/goods/goods',
     meta: { title: '商品', icon: 'el-icon-s-help' },
     children: [
       {
@@ -85,19 +86,6 @@ export const constantRoutes = [
         name: 'create-goods',
         component: () => import('@/views/goods/create-goods'),
         meta: { title: '创建商品', icon: 'tree' }
-      }
-    ]
-  },
-
-  {
-    path: '/goods',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'complex-table',
-        component: () => import('@/views/goods/goods'),
-        meta: { title: '商品', icon: 'shopping' }
       }
     ]
   },
