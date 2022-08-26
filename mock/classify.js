@@ -12,7 +12,7 @@ for (let i = 0; i < count; i++) {
     timestamp: +Mock.Random.date('T'),
     title: '@title(1, 2)',
     remark: baseContent,
-    'status|1': ['published', 'draft']
+    'status|1': ['-1', '0', '1']
   }))
 }
 
@@ -34,10 +34,10 @@ module.exports = [
         mockList = mockList.reverse()
       }
 
-      const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))
+      const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1) &&item.status !== '-1')
 
       return {
-        code: 20000,
+        code: 200,
         data: {
           total: mockList.length,
           items: pageList
@@ -54,7 +54,7 @@ module.exports = [
       for (const classify of List) {
         if (classify.id === +id) {
           return {
-            code: 20000,
+            code: 200,
             data: classify
           }
         }
@@ -67,7 +67,7 @@ module.exports = [
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        code: 200,
         data: 'success'
       }
     }
@@ -78,7 +78,7 @@ module.exports = [
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        code: 200,
         data: 'success'
       }
     }
@@ -89,7 +89,7 @@ module.exports = [
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        code: 200,
         data: 'success'
       }
     }

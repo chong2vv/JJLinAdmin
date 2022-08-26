@@ -46,7 +46,7 @@ module.exports = [
       const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))
 
       return {
-        code: 20000,
+        code: 200,
         data: {
           total: mockList.length,
           items: pageList
@@ -63,7 +63,7 @@ module.exports = [
       for (const article of List) {
         if (article.id === +id) {
           return {
-            code: 20000,
+            code: 200,
             data: article
           }
         }
@@ -76,7 +76,7 @@ module.exports = [
     type: 'get',
     response: _ => {
       return {
-        code: 20000,
+        code: 200,
         data: {
           pvData: [
             { key: 'PC', pv: 1024 },
@@ -94,7 +94,7 @@ module.exports = [
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        code: 200,
         data: 'success'
       }
     }
@@ -105,7 +105,7 @@ module.exports = [
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        code: 200,
         data: 'success'
       }
     }

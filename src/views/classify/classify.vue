@@ -7,7 +7,7 @@
       </el-button>
     </div>
 
-    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
+    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%; margin-top:20px;">
       <el-table-column align="center" label="ID" width="80">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
@@ -52,12 +52,12 @@
 
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="{row}">
-          <el-tag v-if="row.status === 'published'" type="success" effect="dark">使用中</el-tag>
-          <el-tag v-if="row.status === 'draft'" type="danger" effect="dark">已禁用</el-tag>
+          <el-tag v-if="row.status === '1'" type="success" effect="dark">使用中</el-tag>
+          <el-tag v-if="row.status === '0'" type="danger" effect="dark">已禁用</el-tag>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="200">
+      <el-table-column align="center" label="操作" width="300">
         <template slot-scope="{row}">
           <el-button
             v-if="row.edit"
@@ -75,13 +75,16 @@
             icon="el-icon-edit"
             @click="row.edit=!row.edit"
           >
-            Edit
+            编辑
           </el-button>
-          <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
-            Publish
+          <el-button v-if="row.status!='1'" size="mini" type="success" @click="handleModifyStatus(row,'1')">
+            启用
           </el-button>
-          <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
-            Draft
+          <el-button v-if="row.status!='0'" size="mini" @click="handleModifyStatus(row,'0')">
+            禁用
+          </el-button>
+          <el-button v-if="row.status!='-1'" size="mini" @click="handleModifyStatus(row,'-1')">
+            删除
           </el-button>
         </template>
       </el-table-column>
@@ -149,7 +152,7 @@ export default {
       temp: {
         id: undefined,
         title: '',
-        status: '启用',
+        status: '1',
         remark: ''
       },
       textMap: {
