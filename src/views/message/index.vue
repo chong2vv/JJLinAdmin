@@ -60,16 +60,26 @@
 
     <el-dialog :title="dialogStatus" :visible.sync="dialogFormVisible">
       <template label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <label class="radio-label" style="padding-left:0;">时间: </label>
-        <label style="padding-left:0;">{{ formatJson(temp.timestamp) }}</label>
-        <label class="radio-label" style="padding-left:0;">标题: </label>
-        <label style="padding-left:0;">{{ temp.title }}</label>
-        <label class="radio-label" style="padding-left:0;">邮箱: </label>
-        <label style="padding-left:0;">{{ temp.email }}</label>
-        <label class="radio-label" style="padding-left:0;">用户名: </label>
-        <label style="padding-left:0;">{{ temp.name }}</label>
-        <label class="radio-label" style="padding-left:0;">内容: </label>
-        <label style="padding-left:0;">{{ temp.content }}</label>
+        <div>
+          <label class="radio-label" style="padding-left:0;">时间: </label>
+          <label style="padding-left:0;">{{ formatJson(temp.timestamp) }}</label>
+        </div>
+        <div>
+          <label class="radio-label" style="padding-left:0;">标题: </label>
+          <label style="padding-left:0;">{{ temp.title }}</label>
+        </div>
+        <div>
+          <label class="radio-label" style="padding-left:0;">邮箱: </label>
+          <label style="padding-left:0;">{{ temp.email }}</label>
+        </div>
+        <div>
+          <label class="radio-label" style="padding-left:0;">用户名: </label>
+          <label style="padding-left:0;">{{ temp.name }}</label>
+        </div>
+        <div>
+          <label class="radio-label" style="padding-left:0;">内容: </label>
+          <label style="padding-left:0;">{{ temp.content }}</label>
+        </div>
       </template>
 
       <div slot="footer" class="dialog-footer">
