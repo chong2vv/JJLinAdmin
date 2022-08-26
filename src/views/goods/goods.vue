@@ -81,9 +81,11 @@
       </el-table-column>
       <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Edit
-          </el-button>
+          <router-link :to="'/example/edit/'+row.id">
+            <el-button type="primary" size="small" icon="el-icon-edit">
+              Edit
+            </el-button>
+          </router-link>
           <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
             Publish
           </el-button>
