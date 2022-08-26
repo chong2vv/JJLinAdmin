@@ -6,13 +6,15 @@ const table = require('./table')
 const article = require('./article')
 const remote_search = require('./remote-search')
 const classify = require('./classify')
+const message = require('./message')
 
 const mocks = [
   ...user,
   ...table,
   ...article,
   ...remote_search,
-  ...classify
+  ...classify,
+  ...message
 ]
 
 // for front mock
