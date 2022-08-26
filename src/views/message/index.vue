@@ -44,16 +44,40 @@
           <span>{{ formatJson(scope.row.timestamp) }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" width="120">
+      <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status!='1'" size="mini" type="success" @click="handleModifyStatus(scope.row,'1')">
-            完成处理
+          <el-button v-if="scope.row.status!='1'" size="mini" @click="handleModifyStatus(scope.row,'1')">
+            已处理
+          </el-button>
+          <el-button size="mini" type="success" @click="viewDetail(scope.row)">
+            详情
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+
+    <el-dialog :title="dialogStatus" :visible.sync="dialogFormVisible">
+      <template label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+        <label class="radio-label" style="padding-left:0;">时间: </label>
+        <label style="padding-left:0;">{{ formatJson(temp.timestamp) }}</label>
+        <label class="radio-label" style="padding-left:0;">标题: </label>
+        <label style="padding-left:0;">{{ temp.title }}</label>
+        <label class="radio-label" style="padding-left:0;">邮箱: </label>
+        <label style="padding-left:0;">{{ temp.email }}</label>
+        <label class="radio-label" style="padding-left:0;">用户名: </label>
+        <label style="padding-left:0;">{{ temp.name }}</label>
+        <label class="radio-label" style="padding-left:0;">内容: </label>
+        <label style="padding-left:0;">{{ temp.content }}</label>
+      </template>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">
+          Cancel
+        </el-button>
+      </div>
+    </el-dialog>
 
   </div>
 </template>
@@ -92,7 +116,9 @@ export default {
         email: '',
         status: '0'
       },
-      statusOptions: ['已处理', '未处理']
+      statusOptions: ['已处理', '未处理'],
+      dialogFormVisible: false,
+      dialogStatus: '详情'
     }
   },
   created() {
@@ -142,7 +168,23 @@ export default {
           this.listLoading = false
         }, 5 * 1000)
       })
+    },
+    viewDetail(row) {
+      this.temp = Object.assign({}, row) // copy obj
+      this.dialogFormVisible = true
+    },
+    closeViewDetail() {
+      this.dialogFormVisible = false
     }
   }
 }
 </script>
+
+<style>
+.radio-label {
+  font-size: 14px;
+  color: #606266;
+  line-height: 40px;
+  padding: 0 12px 0 30px;
+}
+</style>
