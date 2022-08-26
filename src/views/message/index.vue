@@ -10,7 +10,7 @@
     >
       <el-table-column align="center" label="ID" width="70">
         <template slot-scope="scope">
-          {{ scope.$index }}
+          {{ scope.row.id }}
         </template>
       </el-table-column>
       <el-table-column label="标题" width="200">
@@ -41,7 +41,7 @@
       <el-table-column align="center" prop="created_at" label="发件时间" width="110">
         <template slot-scope="scope">
           <i class="el-icon-time" />
-          <span>{{ formatJson(scope.row.timestamp) | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ formatJson(scope.row.timestamp) }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作" width="120">
@@ -60,10 +60,12 @@
 
 <script>
 
-import { fetchList } from '@/api/message'
+import { fetchList, opMessage } from '@/api/message'
 import { parseTime } from '@/utils'
+import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
+  components: { Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -128,6 +130,18 @@ export default {
     handleModifyStatus(row, status) {
       this.temp = Object.assign({}, row) // copy obj
       this.temp.status = status
+      console.log('status ==== ' + status)
+      console.log('title ==== ' + this.temp.title)
+      opMessage(this.temp).then(response => {
+        this.$message({
+          message: '操作Success',
+          type: 'success'
+        })
+        row.status = status
+        setTimeout(() => {
+          this.listLoading = false
+        }, 5 * 1000)
+      })
     }
   }
 }

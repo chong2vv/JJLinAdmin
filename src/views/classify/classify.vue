@@ -254,7 +254,7 @@ export default {
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           updateClassify(tempData).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
+            this.list.splice(index, 1, this.temp) // //成功后替换
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',

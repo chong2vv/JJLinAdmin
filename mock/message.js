@@ -82,5 +82,16 @@ module.exports = [
         data: 'success'
       }
     }
+  },
+
+  {
+    url: '/vue-admin-template/message/op',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 200,
+        data: 'success'
+      }
+    }
   }
 ]

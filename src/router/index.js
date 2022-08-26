@@ -146,3 +146,6 @@ export function resetRouter() {
 }
 
 export default router
+
+export class asyncRoutes {
+}
