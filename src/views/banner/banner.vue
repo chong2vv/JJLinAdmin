@@ -3,7 +3,7 @@
 
     <div class="filter-container">
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        新增分类
+        新增banner
       </el-button>
     </div>
 
@@ -14,7 +14,17 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="80px" label="类名">
+      <el-table-column width="200" label="图片">
+        <template slot-scope="{row}">
+          <el-image :src="row.image_url" :preview-src-list="[row.image_url]">>
+            <div slot="placeholder" class="image-slot">
+              加载中<span class="dot">...</span>
+            </div>
+          </el-image>
+        </template>
+      </el-table-column>
+
+      <el-table-column min-width="80px" label="标题">
         <template slot-scope="{row}">
           <template v-if="row.edit">
             <el-input v-model="row.title" class="edit-input" size="small" />
@@ -36,13 +46,7 @@
         <template slot-scope="{row}">
           <template v-if="row.edit">
             <el-input v-model="row.remark" class="edit-input" size="small" />
-            <el-button
-              class="cancel-btn"
-              size="small"
-              icon="el-icon-refresh"
-              type="warning"
-              @click="cancelEdit(row)"
-            >
+            <el-button class="cancel-btn" size="small" icon="el-icon-refresh" type="warning" @click="cancelEdit(row)">
               cancel
             </el-button>
           </template>
@@ -73,35 +77,45 @@
             type="primary"
             size="small"
             icon="el-icon-edit"
-            @click="row.edit=!row.edit"
+            @click="handledEdit(row) "
           >
             编辑
           </el-button>
-          <el-button v-if="row.status!='1'" size="mini" type="success" @click="handleModifyStatus(row,'1')">
+          <el-button v-if="row.status!=='1'" size="mini" type="success" @click="handleModifyStatus(row,'1')">
             启用
           </el-button>
-          <el-button v-if="row.status!='0'" size="mini" @click="handleModifyStatus(row,'0')">
+          <el-button v-if="row.status!=='0'" size="mini" @click="handleModifyStatus(row,'0')">
             禁用
           </el-button>
-          <el-button v-if="row.status!='-1'" size="mini" @click="handleModifyStatus(row,'-1')">
+          <el-button v-if="row.status!=='-1'" size="mini" @click="handleModifyStatus(row,'-1')">
             删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Title" prop="title">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" min-width="400px">
+      <el-form ref="dataForm" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px; min-width: 400px">
+        <el-form-item label="标题" prop="title">
           <el-input v-model="temp.title" />
         </el-form-item>
-        <el-form-item label="Status">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
+        <el-form-item label="状态">
+          <el-select v-model="statusMap[temp.status]" class="filter-item" placeholder="Please select">
             <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Remark">
+        <el-form-item label="备注">
           <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
+        </el-form-item>
+        <el-form-item label="图片">
+          <el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleImageUploadSuccess" :before-upload="beforeImageUpload">
+            <div v-if="temp.image_url">
+              <img :src="temp.image_url" class="el-upload-list__item-thumbnail">
+            </div>
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
+          </el-upload>
+          <i class="el-icon-full-screen" @click="handlePictureCardPreview(temp.image_url)" />
+          <i class="el-icon-delete" style="margin-left: 10px;" @click="handleRemove()" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -113,24 +127,17 @@
         </el-button>
       </div>
     </el-dialog>
-
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
-      </span>
+    <el-dialog :visible.sync="dialogImageUploadVisible">
+      <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchList, createClassify, updateClassify } from '@/api/classify'
+import { fetchList, createBanner, updateBanner, opBanner } from '@/api/banner'
 
 export default {
-  name: 'InlineEditTable',
+  name: 'Banner',
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -153,7 +160,11 @@ export default {
         id: undefined,
         title: '',
         status: '1',
-        remark: ''
+        remark: '',
+        image_url: '',
+        url: '',
+        status_str: '',
+        fileList: []
       },
       textMap: {
         update: 'Edit',
@@ -163,11 +174,13 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       dialogPvVisible: false,
-      pvData: [],
-      rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+      dialogImageUploadVisible: false,
+      dialogImageUrl: '',
+      disabled: false,
+      statusMap: {
+        '-1': '删除',
+        '0': '停用',
+        '1': '启用'
       }
     }
   },
@@ -192,7 +205,10 @@ export default {
         id: undefined,
         remark: '',
         title: '',
-        status: '启用'
+        image_url: '',
+        url: '',
+        status: '1',
+        fileList: []
       }
     },
     cancelEdit(row) {
@@ -224,19 +240,42 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    handleModifyStatus(row, status) {
+    handledEdit(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.status = status
+      this.dialogStatus = 'edit'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    handleModifyStatus(row, status) {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          const tempData = Object.assign({}, row)
+          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          tempData.status = status
+          opBanner(tempData).then(() => {
+            const index = this.list.findIndex(v => v.id === this.temp.id)
+            this.list.splice(index, 1, this.temp) // //成功后替换
+            this.dialogFormVisible = false
+            this.$notify({
+              title: 'Success',
+              message: 'Update Successfully',
+              type: 'success',
+              duration: 2000
+            })
+          })
+        }
+      })
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           this.temp.author = 'vue-element-admin'
-          const self = this
-          createClassify(this.temp).then(() => {
-            self.list.unshift(this.temp)
-            self.dialogFormVisible = false
+          createBanner(this.temp).then(() => {
+            this.list.unshift(this.temp)
+            this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
               message: 'Created Successfully',
@@ -248,16 +287,14 @@ export default {
       })
     },
     updateData() {
-      console.log('进到updata')
-      const self = this
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateClassify(tempData).then(() => {
+          updateBanner(tempData).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
-            self.list.splice(index, 1, this.temp) // //成功后替换
-            self.dialogFormVisible = false
+            this.list.splice(index, 1, this.temp) // //成功后替换
+            this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
               message: 'Update Successfully',
@@ -267,6 +304,32 @@ export default {
           })
         }
       })
+    },
+    handleImageUploadSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw)
+    },
+    beforeImageUpload(file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
+    },
+    handleRemove() {
+      console.log('shanchu ?=========')
+    },
+    handlePictureCardPreview(url) {
+      console.log('全屏')
+      this.dialogImageUrl = url
+      this.dialogImageUploadVisible = true
+    },
+    handleDownload(file) {
+      console.log(file)
     }
   }
 }

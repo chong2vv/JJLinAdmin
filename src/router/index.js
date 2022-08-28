@@ -56,6 +56,19 @@ export const constantRoutes = [
   },
 
   {
+    path: '/banner',
+    component: Layout,
+    children: [
+      {
+        path: 'banner',
+        name: 'banner',
+        component: () => import('@/views/banner/banner'),
+        meta: { title: 'banner', icon: 'theme' }
+      }
+    ]
+  },
+
+  {
     path: '/message',
     component: Layout,
     children: [

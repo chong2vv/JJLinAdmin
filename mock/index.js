@@ -7,6 +7,7 @@ const article = require('./article')
 const remote_search = require('./remote-search')
 const classify = require('./classify')
 const message = require('./message')
+const banner = require('./banner')
 
 const mocks = [
   ...user,
@@ -14,7 +15,8 @@ const mocks = [
   ...article,
   ...remote_search,
   ...classify,
-  ...message
+  ...message,
+  ...banner
 ]
 
 // for front mock

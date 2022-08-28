@@ -83,8 +83,11 @@
       </template>
 
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          Cancel
+        <el-button type="success" @click="handleModifyStatusAndClose">
+          已处理
+        </el-button>
+        <el-button type="info" @click="dialogFormVisible = false">
+          取消
         </el-button>
       </div>
     </el-dialog>
@@ -99,6 +102,7 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
+  name: 'Message',
   components: { Pagination },
   filters: {
     statusFilter(status) {
@@ -166,25 +170,39 @@ export default {
     handleModifyStatus(row, status) {
       this.temp = Object.assign({}, row) // copy obj
       this.temp.status = status
-      console.log('status ==== ' + status)
-      console.log('title ==== ' + this.temp.title)
+      const self = this
       opMessage(this.temp).then(response => {
         this.$message({
           message: '操作Success',
           type: 'success'
         })
         row.status = status
+        self.resetTemp()
         setTimeout(() => {
-          this.listLoading = false
+          self.listLoading = false
+        }, 5 * 1000)
+      })
+    },
+    handleModifyStatusAndClose() {
+      this.dialogFormVisible = false
+      this.temp.status = '1'
+      const self = this
+      opMessage(this.temp).then(response => {
+        const index = self.list.findIndex(v => v.id === this.temp.id)
+        self.list.splice(index, 1, this.temp)
+        self.resetTemp()
+        this.$message({
+          message: '操作Success',
+          type: 'success'
+        })
+        setTimeout(() => {
+          self.listLoading = false
         }, 5 * 1000)
       })
     },
     viewDetail(row) {
       this.temp = Object.assign({}, row) // copy obj
       this.dialogFormVisible = true
-    },
-    closeViewDetail() {
-      this.dialogFormVisible = false
     }
   }
 }
