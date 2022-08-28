@@ -99,7 +99,7 @@ const defaultForm = {
 }
 
 export default {
-  name: 'ArticleDetail',
+  name: 'GoodsDetail',
   components: { Tinymce, Upload, Sticky },
   props: {
     isEdit: {

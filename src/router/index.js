@@ -91,14 +91,21 @@ export const constantRoutes = [
       {
         path: 'goods',
         name: 'goods',
-        component: () => import('@/views/goods/goods'),
+        component: () => import('@/views/goods/list'),
         meta: { title: '商品列表', icon: 'shopping' }
       },
       {
-        path: 'create-goods',
-        name: 'create-goods',
-        component: () => import('@/views/goods/create-goods'),
+        path: 'create',
+        name: 'create',
+        component: () => import('@/views/goods/create'),
         meta: { title: '创建商品', icon: 'tree' }
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        component: () => import('@/views/goods/edit'),
+        name: 'edit',
+        meta: { title: '编辑商品', noCache: true, activeMenu: '/goods/goods' },
+        hidden: true
       }
     ]
   },
