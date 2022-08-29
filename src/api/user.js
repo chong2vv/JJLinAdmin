@@ -31,17 +31,25 @@ export function fetchList(query) {
   })
 }
 
-export function getUserInfoWithId(id) {
-  return request({
-    url: '/vue-admin-template/user/detail',
-    method: 'get',
-    params: { id }
-  })
-}
-
 export function createUser(data) {
   return request({
     url: '/vue-admin-template/user/create',
+    method: 'post',
+    data
+  })
+}
+
+export function updateUser(data) {
+  return request({
+    url: '/vue-admin-template/user/update',
+    method: 'post',
+    data
+  })
+}
+
+export function opUser(data) {
+  return request({
+    url: '/vue-admin-template/user/op',
     method: 'post',
     data
   })

@@ -3,7 +3,7 @@
 
     <div class="filter-container">
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        新增banner
+        用户管理
       </el-button>
     </div>
 
@@ -14,43 +14,21 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="200" label="图片">
+      <el-table-column width="100" label="头像">
         <template slot-scope="{row}">
-          <el-image :src="row.image_url" :preview-src-list="[row.image_url]">>
-            <div slot="placeholder" class="image-slot">
-              加载中<span class="dot">...</span>
-            </div>
-          </el-image>
+          <el-image :src="row.avatar" :preview-src-list="[row.avatar]" />
         </template>
       </el-table-column>
 
-      <el-table-column min-width="80px" label="标题">
+      <el-table-column min-width="80px" label="用户名">
         <template slot-scope="{row}">
-          <template v-if="row.edit">
-            <el-input v-model="row.title" class="edit-input" size="small" />
-            <el-button
-              class="cancel-btn"
-              size="small"
-              icon="el-icon-refresh"
-              type="warning"
-              @click="cancelEdit(row)"
-            >
-              cancel
-            </el-button>
-          </template>
-          <span v-else>{{ row.title }}</span>
+          <span>{{ row.name }}</span>
         </template>
       </el-table-column>
 
       <el-table-column min-width="120px" label="备注">
         <template slot-scope="{row}">
-          <template v-if="row.edit">
-            <el-input v-model="row.remark" class="edit-input" size="small" />
-            <el-button class="cancel-btn" size="small" icon="el-icon-refresh" type="warning" @click="cancelEdit(row)">
-              cancel
-            </el-button>
-          </template>
-          <span v-else>{{ row.remark }}</span>
+          <span>{{ row.remark }}</span>
         </template>
       </el-table-column>
 
@@ -96,8 +74,8 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" min-width="400px">
       <el-form ref="dataForm" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px; min-width: 400px">
-        <el-form-item label="标题" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item label="用户名" prop="title">
+          <el-input v-model="temp.name" />
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="statusMap[temp.status]" class="filter-item" placeholder="Please select">
@@ -107,15 +85,13 @@
         <el-form-item label="备注">
           <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
         </el-form-item>
-        <el-form-item label="图片">
-          <el-upload class="avatar-uploader" action="https://rhaxmiodp.hb-bkt.clouddn.com" :show-file-list="false" :on-success="handleImageUploadSuccess">
-            <div v-if="temp.image_url">
-              <img :src="temp.image_url" class="el-upload-list__item-thumbnail">
+        <el-form-item label="头像">
+          <el-upload class="avatar-uploader" action="https://rhaxmiodp.hb-bkt.clouddn.com" :show-file-list="false" :on-success="handleImageUploadSuccess" :before-upload="beforeImageUpload">
+            <div v-if="temp.avatar">
+              <img :src="temp.avatar" class="avatar">
             </div>
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
-          <i class="el-icon-full-screen" @click="handlePictureCardPreview(temp.image_url)" />
-          <i class="el-icon-delete" style="margin-left: 10px;" @click="handleRemove()" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -134,10 +110,10 @@
 </template>
 
 <script>
-import { fetchList, createBanner, updateBanner, opBanner } from '@/api/banner'
+import { fetchList, createUser, updateUser, opUser } from '@/api/user'
 
 export default {
-  name: 'Banner',
+  name: 'User',
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -158,13 +134,9 @@ export default {
       },
       temp: {
         id: undefined,
-        title: '',
-        status: '1',
-        remark: '',
-        image_url: '',
-        url: '',
-        status_str: '',
-        fileList: []
+        name: '',
+        avatar: '',
+        status: '1'
       },
       textMap: {
         update: 'Edit',
@@ -173,7 +145,6 @@ export default {
       statusOptions: ['启用', '停用', '删除'],
       dialogFormVisible: false,
       dialogStatus: '',
-      dialogPvVisible: false,
       dialogImageUploadVisible: false,
       dialogImageUrl: '',
       disabled: false,
@@ -203,12 +174,9 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        remark: '',
-        title: '',
-        image_url: '',
-        url: '',
-        status: '1',
-        fileList: []
+        name: '',
+        avatar: '',
+        status: '1'
       }
     },
     cancelEdit(row) {
@@ -254,7 +222,7 @@ export default {
           const tempData = Object.assign({}, row)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           tempData.status = status
-          opBanner(tempData).then(() => {
+          opUser(tempData).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp) // //成功后替换
             this.dialogFormVisible = false
@@ -273,7 +241,7 @@ export default {
         if (valid) {
           this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           this.temp.author = 'vue-element-admin'
-          createBanner(this.temp).then(() => {
+          createUser(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
@@ -291,7 +259,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateBanner(tempData).then(() => {
+          updateUser(tempData).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp) // //成功后替换
             this.dialogFormVisible = false
@@ -309,28 +277,32 @@ export default {
       this.imageUrl = URL.createObjectURL(file.raw)
       console.log('============= 上传的' + this.imageUrl)
     },
-    handleRemove() {
-      console.log('shanchu ?=========')
-    },
-    handlePictureCardPreview(url) {
-      console.log('全屏')
-      this.dialogImageUrl = url
-      this.dialogImageUploadVisible = true
-    },
-    handleDownload(file) {
-      console.log(file)
+    beforeImageUpload(file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
     }
   }
 }
 </script>
 
 <style scoped>
-.edit-input {
-  padding-right: 100px;
+.avatar{
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
 }
-.cancel-btn {
-  position: absolute;
-  right: 15px;
-  top: 10px;
+
+.list-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
 }
 </style>
