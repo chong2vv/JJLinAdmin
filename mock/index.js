@@ -2,7 +2,6 @@ const Mock = require('mockjs')
 const { param2Obj } = require('./utils')
 
 const user = require('./user')
-const table = require('./table')
 const article = require('./article')
 const remote_search = require('./remote-search')
 const classify = require('./classify')
@@ -11,7 +10,6 @@ const banner = require('./banner')
 
 const mocks = [
   ...user,
-  ...table,
   ...article,
   ...remote_search,
   ...classify,
