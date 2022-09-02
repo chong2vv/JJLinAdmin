@@ -124,6 +124,35 @@ export const constantRoutes = [
   },
 
   {
+    path: '/blog',
+    component: Layout,
+    name: 'Blog',
+    redirect: '/blog/blog',
+    meta: { title: '文章', icon: 'el-icon-s-help' },
+    children: [
+      {
+        path: 'list',
+        name: 'ArticleList',
+        component: () => import('@/views/blog/list'),
+        meta: { title: '文章列表', icon: 'shopping' }
+      },
+      {
+        path: 'create',
+        name: 'CreateArticle',
+        component: () => import('@/views/blog/create'),
+        meta: { title: '创建文章', icon: 'tree' }
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        component: () => import('@/views/blog/edit'),
+        name: 'EditArticle',
+        meta: { title: '编辑商品', noCache: true, activeMenu: '/blog/blog' },
+        hidden: true
+      }
+    ]
+  },
+
+  {
     path: '/plan',
     component: Layout,
     children: [

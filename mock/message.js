@@ -13,7 +13,9 @@ for (let i = 0; i < count; i++) {
     name: '@first',
     title: '@title(5, 10)',
     email: 'chong2vv@gmail.com',
+    phone: '15712721839',
     content: baseContent,
+    'from_type|1': ['0', '1'],
     'status|1': ['0', '1']
   }))
 }

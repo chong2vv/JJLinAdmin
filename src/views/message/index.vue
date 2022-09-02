@@ -28,14 +28,24 @@
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="邮箱" width="180" align="center">
+      <el-table-column label="邮箱" width="160" align="center">
         <template slot-scope="scope">
           {{ scope.row.email }}
+        </template>
+      </el-table-column>
+      <el-table-column label="电话" width="160" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.phone }}
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="状态" width="80" align="center">
         <template slot-scope="scope">
           <el-tag :type="scope.row.status | statusFilter">{{ getLabelWithStatus( scope.row.status ) }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column class-name="status-col" label="来源" width="80" align="center">
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.from_type | statusFilter">{{ getFromTypeWithStatus( scope.row.from_type ) }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="发件时间" width="110">
@@ -73,12 +83,20 @@
           <label style="padding-left:0;">{{ temp.email }}</label>
         </div>
         <div>
+          <label class="radio-label" style="padding-left:0;">电话: </label>
+          <label style="padding-left:0;">{{ temp.phone }}</label>
+        </div>
+        <div>
           <label class="radio-label" style="padding-left:0;">用户名: </label>
           <label style="padding-left:0;">{{ temp.name }}</label>
         </div>
         <div>
           <label class="radio-label" style="padding-left:0;">内容: </label>
           <label style="padding-left:0;">{{ temp.content }}</label>
+        </div>
+        <div>
+          <label class="radio-label" style="padding-left:0;">来源: </label>
+          <label style="padding-left:0;">{{ getFromTypeWithStatus( temp.from_type ) }}</label>
         </div>
       </template>
 
@@ -128,9 +146,12 @@ export default {
         name: '',
         content: '',
         email: '',
+        phone: '',
+        from_type: '0',
         status: '0'
       },
       statusOptions: ['已处理', '未处理'],
+      fromTypeOptions: ['const', 'blog'],
       dialogFormVisible: false,
       dialogStatus: '详情'
     }
@@ -154,6 +175,8 @@ export default {
         name: '',
         content: '',
         email: '',
+        phone: '',
+        from_type: '0',
         status: '0'
       }
     },
@@ -161,6 +184,13 @@ export default {
       const statusMap = {
         0: '未处理',
         1: '已处理'
+      }
+      return statusMap[status]
+    },
+    getFromTypeWithStatus(status) {
+      const statusMap = {
+        0: 'const',
+        1: 'blog'
       }
       return statusMap[status]
     },
