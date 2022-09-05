@@ -15,3 +15,11 @@ export function transactionList(query) {
     params: query
   })
 }
+
+export function searchClass(name) {
+  return request({
+    url: '/vue-element-admin/search/class',
+    method: 'get',
+    params: { name }
+  })
+}

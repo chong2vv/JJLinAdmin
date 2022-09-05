@@ -42,7 +42,7 @@
       </el-table-column>
       <el-table-column label="Date" width="150px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ row.create_at | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Title" min-width="150px">
@@ -205,12 +205,20 @@ export default {
       showReviewer: false,
       temp: {
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        type: '',
-        status: 'published'
+        status: 'draft',
+        title: '', // 商品名
+        content: '', // 商品描述
+        excerpt: 'test', // 短描述
+        size: 'test', // 尺寸
+        material: '', // 材料
+        pack: '', // 打包方式
+        qty: '', // 装箱量
+        timer: '', // 准备时长
+        cover_img: '', // 封面图
+        img_list: [], // 图片数组
+        tags: [], // 标签数组
+        categories: {}, // 分类
+        is_home_list: true // 是否首页展示
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -272,12 +280,20 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
+        status: 'draft',
+        title: '', // 商品名
+        content: '', // 商品描述
+        excerpt: 'test', // 短描述
+        size: 'test', // 尺寸
+        material: '', // 材料
+        pack: '', // 打包方式
+        qty: '', // 装箱量
+        timer: '', // 准备时长
+        cover_img: '', // 封面图
+        img_list: [], // 图片数组
+        tags: [], // 标签数组
+        categories: {}, // 分类
+        is_home_list: true // 是否首页展示
       }
     },
     handleCreate() {
