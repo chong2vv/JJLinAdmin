@@ -18,33 +18,32 @@
               <el-input v-model="postForm.title" />
             </el-form-item>
 
-            <el-form-item label="制造商">
-              <el-input v-model="postForm.manufacturer" />
+            <el-form-item label="尺寸">
+              <el-input v-model="postForm.size" />
             </el-form-item>
 
             <el-form-item label="材料">
-              <el-input v-model="postForm.materials" />
+              <el-input v-model="postForm.material" />
+            </el-form-item>
+
+            <el-form-item label="打包方式">
+              <el-input v-model="postForm.pack" />
+            </el-form-item>
+
+            <el-form-item label="装箱量">
+              <el-input v-model="postForm.qty" />
+            </el-form-item>
+
+            <el-form-item label="准备时间">
+              <el-input v-model="postForm.timer" />
             </el-form-item>
 
             <div class="postInfo-container">
               <el-row>
                 <el-col :span="8">
                   <el-form-item label-width="60px" label="分类:" class="postInfo-container-item">
-                    <el-select v-model="postForm.author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="Search user">
+                    <el-select v-model="postForm.categories" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="Search user">
                       <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item" :value="item" />
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-
-                <el-col :span="8">
-                  <el-form-item label-width="60px" label="尺寸:" class="postInfo-container-item">
-                    <el-select v-model="value1" multiple placeholder="请选择">
-                      <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      />
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -55,16 +54,16 @@
         </el-row>
 
         <el-form-item label="商品描述:">
-          <el-input v-model="postForm.content_short" type="textarea" :autosize="{ minRows: 3, maxRows: 6}" placeholder="编辑内容" />
+          <el-input v-model="postForm.excerpt" type="textarea" :autosize="{ minRows: 3, maxRows: 6}" placeholder="编辑内容" />
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}words</span>
         </el-form-item>
 
         <el-form-item prop="content" style="margin-bottom: 30px;">
-          <Tinymce ref="editor" v-model="postForm.content" :height="400" />
+          <el-input v-model="postForm.content" type="textarea" :autosize="{ minRows: 8, maxRows: 12}" placeholder="编辑内容" />
         </el-form-item>
 
         <el-form-item prop="image_uri" style="margin-bottom: 30px;">
-          <Upload v-model="postForm.image_uri" />
+          <Upload v-model="postForm.cover_img" />
         </el-form-item>
       </div>
     </el-form>
@@ -72,7 +71,6 @@
 </template>
 
 <script>
-import Tinymce from '@/components/Tinymce'
 import Upload from '@/components/Upload/SingleImage3'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { fetchArticle } from '@/api/article'
@@ -82,25 +80,22 @@ const defaultForm = {
   status: 'draft',
   title: '', // 商品名
   content: '', // 商品描述
-  content_short: 'test', // 短描述
-  manufacturer: 'test', // 制造商
-  materials: '', // 材料
-  availability: '', // 库存
-  choose_size: [], // 可选尺寸
-  classify: [], // 分类
-  available_colors: '', // 可选颜色
-  source_uri: '', // 文章外链
-  image_uri: '', // 文章图片
-  display_time: undefined, // 前台展示时间
-  id: undefined,
-  platforms: ['a-platform'],
-  comment_disabled: false,
-  importance: 0
+  excerpt: 'test', // 短描述
+  size: 'test', // 尺寸
+  material: '', // 材料
+  pack: '', // 打包方式
+  qty: '', // 装箱量
+  timer: '', // 准备时长
+  cover_img: '', // 封面图
+  img_list: [], // 图片数组
+  tags: [], // 标签数组
+  categories: {}, // 分类
+  is_home_list: true // 是否首页展示
 }
 
 export default {
   name: 'GoodsDetail',
-  components: { Tinymce, Upload, Sticky },
+  components: { Upload, Sticky },
   props: {
     isEdit: {
       type: Boolean,
