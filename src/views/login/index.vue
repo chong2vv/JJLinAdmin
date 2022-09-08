@@ -54,6 +54,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
+// import { fetchList } from '@/api/user'
 
 export default {
   name: 'Login',
@@ -83,7 +84,8 @@ export default {
       },
       loading: false,
       passwordType: 'password',
-      redirect: undefined
+      redirect: undefined,
+      list: []
     }
   },
   watch: {
