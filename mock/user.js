@@ -48,19 +48,10 @@ module.exports = [
     type: 'post',
     response: config => {
       const { username } = config.body
-      const token = tokens[username]
-
-      // mock error
-      if (!token) {
-        return {
-          code: 60204,
-          message: 'Account and password are incorrect.'
-        }
-      }
-
+      const info = users["admin-token"]
       return {
         code: 200,
-        data: token
+        data: info
       }
     }
   },
@@ -70,8 +61,8 @@ module.exports = [
     url: '/vue-admin-template/user/info\.*',
     type: 'get',
     response: config => {
-      const { token } = config.query
-      const info = users[token]
+      const { id } = config.query
+      const info = users["admin-token"]
 
       // mock error
       if (!info) {
