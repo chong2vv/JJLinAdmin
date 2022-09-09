@@ -53,7 +53,15 @@
         </el-form-item>
 
         <el-form-item prop="image_uri" style="margin-bottom: 30px;">
-          <Upload v-model="postForm.img" />
+          <el-upload
+            class="upload-demo"
+            action="http://localhost:8090/upload/ossFile"
+            :on-change="handleChange"
+            :file-list="fileList"
+          >
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+          </el-upload>
         </el-form-item>
       </div>
     </el-form>
@@ -62,7 +70,6 @@
 
 <script>
 import Tinymce from '@/components/Tinymce'
-import Upload from '@/components/Upload/SingleImage3'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { validURL } from '@/utils/validate'
@@ -87,7 +94,7 @@ const defaultForm = {
 
 export default {
   name: 'ArticleDetail',
-  components: { Tinymce, MDinput, Upload, Sticky, CommentDropdown, PlatformDropdown, SourceUrlDropdown },
+  components: { Tinymce, MDinput, Sticky, CommentDropdown, PlatformDropdown, SourceUrlDropdown },
   props: {
     isEdit: {
       type: Boolean,
@@ -131,7 +138,8 @@ export default {
         content: [{ validator: validateRequire }],
         source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
-      tempRoute: {}
+      tempRoute: {},
+      fileList: []
     }
   },
   computed: {
@@ -229,6 +237,14 @@ export default {
         if (!response.data.items) return
         this.userListOptions = response.data.items.map(v => v.name)
       })
+    },
+    handleChange(file, fileList) {
+      console.log('===== 上传成功 ========' + file)
+      if (file.response) {
+        console.log(file.response.message)
+      }
+
+      this.fileList = fileList.slice(-3)
     }
   }
 }
