@@ -56,19 +56,6 @@ export const constantRoutes = [
   },
 
   {
-    path: '/banner',
-    component: Layout,
-    children: [
-      {
-        path: 'banner',
-        name: 'banner',
-        component: () => import('@/views/banner/banner'),
-        meta: { title: 'banner', icon: 'theme' }
-      }
-    ]
-  },
-
-  {
     path: '/user',
     component: Layout,
     children: [
@@ -90,6 +77,19 @@ export const constantRoutes = [
         name: 'message',
         component: () => import('@/views/message/index'),
         meta: { title: '信息', icon: 'email' }
+      }
+    ]
+  },
+
+  {
+    path: '/classify',
+    component: Layout,
+    children: [
+      {
+        path: 'classify',
+        name: 'plan',
+        component: () => import('@/views/classify/classify'),
+        meta: { title: '分类', icon: 'table' }
       }
     ]
   },
@@ -128,13 +128,13 @@ export const constantRoutes = [
     component: Layout,
     name: 'Blog',
     redirect: '/blog/blog',
-    meta: { title: '文章', icon: 'el-icon-s-help' },
+    meta: { title: '文章', icon: 'documentation' },
     children: [
       {
         path: 'list',
         name: 'ArticleList',
         component: () => import('@/views/blog/list'),
-        meta: { title: '文章列表', icon: 'shopping' }
+        meta: { title: '文章列表', icon: 'nested' }
       },
       {
         path: 'create',
@@ -166,14 +166,14 @@ export const constantRoutes = [
   },
 
   {
-    path: '/classify',
+    path: '/banner',
     component: Layout,
     children: [
       {
-        path: 'classify',
-        name: 'plan',
-        component: () => import('@/views/classify/classify'),
-        meta: { title: '分类', icon: 'table' }
+        path: 'banner',
+        name: 'banner',
+        component: () => import('@/views/banner/banner'),
+        meta: { title: 'banner', icon: 'theme' }
       }
     ]
   },

@@ -16,75 +16,61 @@
 
       <el-table-column min-width="80px" label="类名">
         <template slot-scope="{row}">
-          <template v-if="row.edit">
-            <el-input v-model="row.title" class="edit-input" size="small" />
-            <el-button
-              class="cancel-btn"
-              size="small"
-              icon="el-icon-refresh"
-              type="warning"
-              @click="cancelEdit(row)"
-            >
-              cancel
-            </el-button>
-          </template>
-          <span v-else>{{ row.title }}</span>
+          <span>{{ row.title }}</span>
         </template>
       </el-table-column>
 
       <el-table-column min-width="120px" label="备注">
         <template slot-scope="{row}">
-          <template v-if="row.edit">
-            <el-input v-model="row.remark" class="edit-input" size="small" />
-            <el-button
-              class="cancel-btn"
-              size="small"
-              icon="el-icon-refresh"
-              type="warning"
-              @click="cancelEdit(row)"
-            >
-              cancel
-            </el-button>
-          </template>
-          <span v-else>{{ row.remark }}</span>
+          <span>{{ row.remark }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="200">
+      <el-table-column width="200" label="图片">
         <template slot-scope="{row}">
-          <el-tag v-if="row.status === '1'" type="success" effect="dark">使用中</el-tag>
-          <el-tag v-if="row.status === '0'" type="danger" effect="dark">已禁用</el-tag>
+          <template v-if="row.edit">
+            <el-upload
+              class="avatar-uploader"
+              action="http://localhost:8090/upload/ossFile"
+              :show-file-list="false"
+              :on-success="handleUploadSuccess()"
+              :before-upload="beforeUpload"
+            >
+              <el-image v-if="row.image_url" :src="row.image_url" />
+            </el-upload>
+          </template>
+          <template v-else>
+            <el-image :src="row.image_url" :preview-src-list="[row.image_url]">
+              <div slot="placeholder" class="image-slot">
+                加载中<span class="dot">...</span>
+              </div>
+            </el-image>
+          </template>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="状态" width="200">
+        <template slot-scope="{row}">
+          <el-tag v-if="row.status === 1" type="success" effect="dark">使用中</el-tag>
+          <el-tag v-if="row.status === 0" type="danger" effect="dark">已禁用</el-tag>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="操作" width="300">
         <template slot-scope="{row}">
           <el-button
-            v-if="row.edit"
-            type="success"
-            size="small"
-            icon="el-icon-circle-check-outline"
-            @click="confirmEdit(row)"
-          >
-            Ok
-          </el-button>
-          <el-button
-            v-else
             type="primary"
             size="small"
             icon="el-icon-edit"
-            @click="row.edit=!row.edit"
+            @click="handledEdit(row)"
           >
             编辑
           </el-button>
-          <el-button v-if="row.status!='1'" size="mini" type="success" @click="handleModifyStatus(row,'1')">
+          <el-button v-if="row.status!== 1" size="mini" type="success" @click="handleModifyStatus(row,1)">
             启用
           </el-button>
-          <el-button v-if="row.status!='0'" size="mini" @click="handleModifyStatus(row,'0')">
+          <el-button v-if="row.status!== 0" size="mini" @click="handleModifyStatus(row,0)">
             禁用
-          </el-button>
-          <el-button v-if="row.status!='-1'" size="mini" @click="handleModifyStatus(row,'-1')">
-            删除
           </el-button>
         </template>
       </el-table-column>
@@ -103,6 +89,18 @@
         <el-form-item label="Remark">
           <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
         </el-form-item>
+        <el-form-item size="medium" label="图片">
+          <el-upload
+            style="width: 300px; height: 300px;"
+            action="http://localhost:8090/upload/ossFile"
+            :show-file-list="false"
+            :on-success="handleUploadSuccess()"
+            :before-upload="beforeUpload"
+          >
+            <el-image v-if="temp.image_url" :src="temp.image_url" />
+            <i v-else class="el-icon-plus" />
+          </el-upload>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -112,16 +110,6 @@
           Confirm
         </el-button>
       </div>
-    </el-dialog>
-
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
-      </span>
     </el-dialog>
   </div>
 </template>
@@ -152,23 +140,17 @@ export default {
       temp: {
         id: undefined,
         title: '',
-        status: '1',
+        status: 1,
+        image_url: '',
         remark: ''
       },
       textMap: {
         update: 'Edit',
         create: 'Create'
       },
-      statusOptions: ['启用', '停用', '删除'],
+      statusOptions: ['启用', '停用'],
       dialogFormVisible: false,
-      dialogStatus: '',
-      dialogPvVisible: false,
-      pvData: [],
-      rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
-      }
+      dialogStatus: ''
     }
   },
   created() {
@@ -178,7 +160,7 @@ export default {
     async getList() {
       this.listLoading = true
       const { data } = await fetchList(this.listQuery)
-      const items = data.items
+      const items = data.data
       this.list = items.map(v => {
         this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
         v.originalTitle = v.title //  will be used when user click the cancel botton
@@ -192,28 +174,16 @@ export default {
         id: undefined,
         remark: '',
         title: '',
-        status: '启用'
+        image_url: '',
+        status: 1
       }
     },
-    cancelEdit(row) {
-      row.title = row.originalTitle
-      row.edit = false
-      this.$message({
-        message: 'The title has been restored to the original value',
-        type: 'warning'
-      })
-    },
-    confirmEdit(row) {
+    handledEdit(row) {
       this.temp = Object.assign({}, row) // copy obj
-      row.edit = false
-      row.originalTitle = row.title
-      row.originalRemark = row.remark
-      this.temp.title = row.title
-      this.temp.remark = row.remark
-      this.updateData()
-      this.$message({
-        message: 'The title has been edited',
-        type: 'success'
+      this.dialogStatus = 'edit'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
       })
     },
     handleCreate() {
@@ -227,58 +197,58 @@ export default {
     handleModifyStatus(row, status) {
       this.temp = Object.assign({}, row) // copy obj
       this.temp.status = status
+      this.updateData()
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
+          this.listLoading = true
           const self = this
-          createClassify(this.temp).then(() => {
-            self.list.unshift(this.temp)
+          createClassify(this.temp).then(response => {
+            self.listLoading = false
+            self.list.unshift(response.data)
             self.dialogFormVisible = false
+            self.resetTemp()
             this.$notify({
               title: 'Success',
               message: 'Created Successfully',
               type: 'success',
               duration: 2000
             })
+          }).catch(error => {
+            console.log(error)
+            self.listLoading = false
           })
         }
       })
     },
     updateData() {
-      console.log('进到updata')
       const self = this
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateClassify(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            self.list.splice(index, 1, this.temp) // //成功后替换
-            self.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
+      const tempData = Object.assign({}, this.temp)
+      updateClassify(tempData).then(() => {
+        const index = this.list.findIndex(v => v.id === this.temp.id)
+        this.temp.edit = false
+        self.list.splice(index, 1, this.temp) // //成功后替换
+        self.dialogFormVisible = false
+        this.listLoading = false
+        this.$notify({
+          title: 'Success',
+          message: 'Update Successfully',
+          type: 'success',
+          duration: 2000
+        })
       })
+    },
+    handleUploadSuccess(res, file) {
+      // this.temp.image_url = file.url
+      console.log(this.temp.image_url)
+    },
+    beforeUpload(file) {
     }
   }
 }
 </script>
 
 <style scoped>
-.edit-input {
-  padding-right: 100px;
-}
-.cancel-btn {
-  position: absolute;
-  right: 15px;
-  top: 10px;
-}
+
 </style>

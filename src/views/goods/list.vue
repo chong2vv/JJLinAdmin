@@ -68,7 +68,7 @@
       </el-table-column>
       <el-table-column label="Readings" align="center" width="95">
         <template slot-scope="{row}">
-          <span v-if="row.pageviews" class="link-type" @click="handleFetchPv(row.pageviews)">{{ row.pageviews }}</span>
+          <span v-if="row.view" class="link-type" @click="handleFetchPv(row.pageviews)">{{ row.view }}</span>
           <span v-else>0</span>
         </template>
       </el-table-column>
@@ -218,7 +218,8 @@ export default {
         img_list: [], // 图片数组
         tags: [], // 标签数组
         categories: {}, // 分类
-        is_home_list: true // 是否首页展示
+        is_home_list: true, // 是否首页展示
+        view: 0
       },
       dialogFormVisible: false,
       dialogStatus: '',

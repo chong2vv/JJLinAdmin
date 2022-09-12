@@ -12,6 +12,7 @@ for (let i = 0; i < count; i++) {
     timestamp: +Mock.Random.date('T'),
     title: '@title(1, 2)',
     remark: baseContent,
+    image_url: image_uri,
     'status|1': [-1, 0, 1]
   }))
 }
@@ -32,13 +33,13 @@ module.exports = [
         mockList = mockList.reverse()
       }
 
-      const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1) &&item.status !== '-1')
+      const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1) &&item.status !== -1)
 
       return {
         code: 200,
         data: {
           total: mockList.length,
-          items: pageList
+          data: pageList
         }
       }
     }
@@ -63,10 +64,18 @@ module.exports = [
   {
     url: '/vue-admin-template/classify/create',
     type: 'post',
-    response: _ => {
+    response: config => {
+      const { title, remark, status } = config.body
+      console.log(config.body)
+      let data = {}
+      data.title = title
+      data.remark = remark
+      data.status = status
+      data.id = 111222
+      console.log(data.title)
       return {
         code: 200,
-        data: 'success'
+        data: data
       }
     }
   },
