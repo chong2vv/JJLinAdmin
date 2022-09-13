@@ -56,5 +56,20 @@ module.exports = [
         data: pageList
       }
     }
-  }
+  },
+  {
+    url: '/vue-admin-template/goods/detail',
+    type: 'get',
+    response: config => {
+      const { id } = config.query
+      for (const goods of List) {
+        if (goods.id === +id) {
+          return {
+            code: 200,
+            data: goods
+          }
+        }
+      }
+    }
+  },
 ]
