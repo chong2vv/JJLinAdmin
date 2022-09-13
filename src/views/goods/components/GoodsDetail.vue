@@ -6,7 +6,7 @@
         <el-button v-loading="loading" style="margin-left: 20px;margin-top: 12px" type="success" @click="submitForm">
           Publish
         </el-button>
-        <el-button v-loading="loading" type="warning" @click="draftForm">
+        <el-button v-loading="loading" type="warning" @click="coverImageUrl">
           Draft
         </el-button>
       </sticky>
@@ -62,8 +62,24 @@
           <el-input v-model="postForm.content" type="textarea" :autosize="{ minRows: 8, maxRows: 12}" placeholder="编辑内容" />
         </el-form-item>
 
-        <el-form-item prop="image_uri" style="margin-bottom: 30px;">
+        <el-form-item prop="image_uri" label="封面图" style="margin-bottom: 30px;">
           <Upload v-model="postForm.cover_img" />
+        </el-form-item>
+
+        <el-form-item prop="img_list" label="图片/视频" style="margin-bottom: 30px;">
+          <el-upload
+            class="upload-demo"
+            action="http://localhost:8090/upload/ossFile"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :on-change="handleChange"
+            multiple
+            :limit="8"
+            :on-exceed="handleExceed"
+            :file-list="fileList"
+          >
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
         </el-form-item>
       </div>
     </el-form>
@@ -113,6 +129,7 @@ export default {
       loading: false,
       classListOptions: [],
       tempRoute: {},
+      fileList: [],
       value1: []
     }
   },
@@ -196,6 +213,26 @@ export default {
         console.log(response.data)
         this.classListOptions = response.data
       })
+    },
+    coverImageUrl() {
+      console.log('==============')
+      console.log(this.fileList)
+      this.postForm.img_list = this.fileList.map((item) => {
+        return item.response.data[0]
+      })
+      console.log(this.postForm.img_list)
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList)
+    },
+    handlePreview(file) {
+      console.log(file)
+    },
+    handleExceed(files, fileList) {
+
+    },
+    handleChange(file, fileList) {
+      this.fileList = fileList
     }
   }
 }
