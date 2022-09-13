@@ -13,12 +13,12 @@ for (let i = 0; i < count; i++) {
     title: '@title(5, 10)',
     excerpt: 'mock data',
     content: baseContent,
-    categories: {
+    classify: {
       id: '@increment',
       title: '分类1'
     },
     tags:  ['CN', 'US', 'JP', 'EU'],
-    'status|1': ['0', '1'],
+    'status|1': [0, 1],
     create_at: '@datetime',
     size: '168cm (W) x 59.5cm (D) x 109.5cm (H)\n' +
       '66.14" (W) x 23.42" (D) x 43.11" (H)',
@@ -28,6 +28,33 @@ for (let i = 0; i < count; i++) {
     timer: '25-30days',
     cover_img: image_uri,
     img_list: [image_uri, image_uri, image_uri],
-    'is_home_list:1': [true, false]
+    'is_home_list|1': [true, false]
   }))
 }
+
+module.exports = [
+  {
+    url: '/vue-admin-template/goods/list',
+    type: 'get',
+    response: config => {
+      const { title, page = 1, count = 20, sort } = config.query
+
+      let mockList = List.filter(item => {
+        if (title && item.title.indexOf(title) < 0) return false
+        return true
+      })
+
+      if (sort === '-id') {
+        mockList = mockList.reverse()
+      }
+
+      const pageList = mockList.filter((item, index) => index < count * page && index >= count * (page - 1))
+
+      return {
+        code: 200,
+        total_count: mockList.length,
+        data: pageList
+      }
+    }
+  }
+]

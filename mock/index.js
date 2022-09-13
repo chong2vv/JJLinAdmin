@@ -6,6 +6,7 @@ const article = require('./article')
 const remote_search = require('./remote-search')
 const classify = require('./classify')
 const message = require('./message')
+const goods = require('./goods')
 const banner = require('./banner')
 
 const mocks = [
@@ -14,6 +15,7 @@ const mocks = [
   ...remote_search,
   ...classify,
   ...message,
+  ...goods,
   ...banner
 ]
 
