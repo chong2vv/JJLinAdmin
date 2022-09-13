@@ -63,6 +63,8 @@
       </el-table-column>
     </el-table>
 
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.count" @pagination="getList" />
+
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="Title" prop="title">
@@ -103,9 +105,11 @@
 
 <script>
 import { fetchList, createClassify, updateClassify } from '@/api/classify'
+import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
   name: 'InlineEditTable',
+  components: { Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -120,6 +124,7 @@ export default {
     return {
       list: null,
       listLoading: true,
+      total: 0,
       listQuery: {
         page: 1,
         count: 10
@@ -155,8 +160,9 @@ export default {
   methods: {
     async getList() {
       this.listLoading = true
-      const { data } = await fetchList(this.listQuery)
+      const { data, total_count } = await fetchList(this.listQuery)
       this.list = data
+      this.total = total_count
       this.listLoading = false
     },
     resetTemp() {

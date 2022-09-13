@@ -3,7 +3,7 @@
 
     <div class="filter-container">
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        用户管理
+        新增用户
       </el-button>
     </div>
 
@@ -43,26 +43,31 @@
           >
             编辑
           </el-button>
-          <el-button v-if="row.status!=='1'" size="mini" type="success" @click="handleModifyStatus(row,'1')">
+          <el-button v-if="row.status!== 1" size="mini" type="success" @click="handleModifyStatus(row,1)">
             启用
           </el-button>
-          <el-button v-if="row.status!=='0'" size="mini" @click="handleModifyStatus(row,'0')">
+          <el-button v-if="row.status!== 0" size="mini" @click="handleModifyStatus(row,0)">
             禁用
-          </el-button>
-          <el-button v-if="row.status!=='-1'" size="mini" @click="handleModifyStatus(row,'-1')">
-            删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.count" @pagination="getList" />
+
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" min-width="400px">
       <el-form ref="dataForm" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px; min-width: 400px">
+        <el-form-item v-if="dialogStatus === 'create'" label="用户名" prop="title">
+          <el-input v-model="temp.username" />
+        </el-form-item>
+        <el-form-item v-if="dialogStatus === 'create'" label="密码" prop="title">
+          <el-input v-model="temp.password" />
+        </el-form-item>
         <el-form-item label="昵称" prop="title">
           <el-input v-model="temp.nickname" />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
+          <el-select v-model="temp.status" class="filter-item" placeholder="请选择状态">
             <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
@@ -91,10 +96,12 @@
 </template>
 
 <script>
-import { fetchList, createUser, updateUser, opUser } from '@/api/user'
+import { fetchList, createUser, updateUser } from '@/api/user'
+import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
   name: 'User',
+  components: { Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -109,6 +116,7 @@ export default {
     return {
       list: null,
       listLoading: true,
+      total: 0,
       listQuery: {
         page: 1,
         limit: 10
@@ -146,8 +154,9 @@ export default {
   methods: {
     async getList() {
       this.listLoading = true
-      const { data } = await fetchList(this.listQuery)
+      const { data, total_count } = await fetchList(this.listQuery)
       const items = data
+      this.total = total_count
       this.list = items.map(v => {
         this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
         v.originalNickname = v.nickname //  will be used when user click the cancel botton
@@ -160,7 +169,7 @@ export default {
         id: undefined,
         name: '',
         avatar: '',
-        status: '1'
+        status: 1
       }
     },
     handleCreate() {
@@ -180,30 +189,26 @@ export default {
       })
     },
     handleModifyStatus(row, status) {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, row)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          tempData.status = status
-          opUser(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp) // //成功后替换
-            this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
+      this.temp = Object.assign({}, row) // copy obj
+      this.temp.status = status
+      const tempData = this.temp
+      updateUser(tempData).then(() => {
+        const index = this.list.findIndex(v => v.id === this.temp.id)
+        this.list.splice(index, 1, this.temp) // //成功后替换
+        this.dialogFormVisible = false
+        this.$notify({
+          title: 'Success',
+          message: 'Update Successfully',
+          type: 'success',
+          duration: 2000
+        })
       })
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createUser(this.temp).then(() => {
-            this.list.unshift(this.temp)
+          createUser(this.temp).then(response => {
+            this.list.unshift(response.data)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
