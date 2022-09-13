@@ -22,36 +22,20 @@
 
       <el-table-column min-width="80px" label="用户名">
         <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column min-width="120px" label="备注">
-        <template slot-scope="{row}">
-          <span>{{ row.remark }}</span>
+          <span>{{ row.nickname }}</span>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="{row}">
-          <el-tag v-if="row.status === '1'" type="success" effect="dark">使用中</el-tag>
-          <el-tag v-if="row.status === '0'" type="danger" effect="dark">已禁用</el-tag>
+          <el-tag v-if="row.status === 1" type="success" effect="dark">使用中</el-tag>
+          <el-tag v-if="row.status === 0" type="danger" effect="dark">已禁用</el-tag>
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="操作" width="300">
         <template slot-scope="{row}">
           <el-button
-            v-if="row.edit"
-            type="success"
-            size="small"
-            icon="el-icon-circle-check-outline"
-            @click="confirmEdit(row)"
-          >
-            Ok
-          </el-button>
-          <el-button
-            v-else
             type="primary"
             size="small"
             icon="el-icon-edit"
@@ -74,19 +58,16 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" min-width="400px">
       <el-form ref="dataForm" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px; min-width: 400px">
-        <el-form-item label="用户名" prop="title">
-          <el-input v-model="temp.name" />
+        <el-form-item label="昵称" prop="title">
+          <el-input v-model="temp.nickname" />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="statusMap[temp.status]" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
+          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
-        </el-form-item>
         <el-form-item label="头像">
-          <el-upload class="avatar-uploader" action="https://rhaxmiodp.hb-bkt.clouddn.com" :show-file-list="false" :on-success="handleImageUploadSuccess" :before-upload="beforeImageUpload">
+          <el-upload class="avatar-uploader" action="http://localhost:8090/upload/ossFile" :show-file-list="false" :on-success="handleImageUploadSuccess" :before-upload="beforeImageUpload">
             <div v-if="temp.avatar">
               <img :src="temp.avatar" class="avatar">
             </div>
@@ -134,25 +115,29 @@ export default {
       },
       temp: {
         id: undefined,
-        name: '',
+        nickname: '',
         avatar: '',
-        status: '1'
+        status: 1
       },
       textMap: {
         update: 'Edit',
         create: 'Create'
       },
-      statusOptions: ['启用', '停用', '删除'],
+      statusOptions: [
+        {
+          value: 1,
+          label: '启用'
+        },
+        {
+          value: 0,
+          label: '禁用'
+        }
+      ],
       dialogFormVisible: false,
       dialogStatus: '',
       dialogImageUploadVisible: false,
       dialogImageUrl: '',
-      disabled: false,
-      statusMap: {
-        '-1': '删除',
-        '0': '停用',
-        '1': '启用'
-      }
+      disabled: false
     }
   },
   created() {
@@ -162,11 +147,10 @@ export default {
     async getList() {
       this.listLoading = true
       const { data } = await fetchList(this.listQuery)
-      const items = data.items
+      const items = data
       this.list = items.map(v => {
         this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
-        v.originalTitle = v.title //  will be used when user click the cancel botton
-        v.originalRemark = v.remark
+        v.originalNickname = v.nickname //  will be used when user click the cancel botton
         return v
       })
       this.listLoading = false
@@ -178,27 +162,6 @@ export default {
         avatar: '',
         status: '1'
       }
-    },
-    cancelEdit(row) {
-      row.title = row.originalTitle
-      row.edit = false
-      this.$message({
-        message: 'The title has been restored to the original value',
-        type: 'warning'
-      })
-    },
-    confirmEdit(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      row.edit = false
-      row.originalTitle = row.title
-      row.originalRemark = row.remark
-      this.temp.title = row.title
-      this.temp.remark = row.remark
-      this.updateData()
-      this.$message({
-        message: 'The title has been edited',
-        type: 'success'
-      })
     },
     handleCreate() {
       this.resetTemp()
@@ -239,8 +202,6 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
           createUser(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -258,7 +219,6 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           updateUser(tempData).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp) // //成功后替换
@@ -274,8 +234,10 @@ export default {
       })
     },
     handleImageUploadSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw)
-      console.log('============= 上传的' + this.imageUrl)
+      console.log(res.data[0])
+      if (res.data[0]) {
+        this.temp.avatar = res.data[0]
+      }
     },
     beforeImageUpload(file) {
       const isJPG = file.type === 'image/jpeg'

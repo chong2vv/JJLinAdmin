@@ -33,11 +33,9 @@ const image_uri = 'https://wpimg.wallstcn.com/e4558086-631c-425c-9430-56ffb46e70
 for (let i = 0; i < count; i++) {
   List.push(Mock.mock({
     id: '@increment',
-    timestamp: +Mock.Random.date('T'),
-    name: '@title(1, 2)',
+    nickname: '@title(1, 2)',
     avatar: image_uri,
-    remark: baseContent,
-    'status|1': ['-1', '0', '1']
+    'status|1': [-1, 0, 1]
   }))
 }
 
@@ -112,7 +110,7 @@ module.exports = [
         code: 200,
         data: {
           total: mockList.length,
-          items: pageList
+          data: pageList
         }
       }
     }

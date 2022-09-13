@@ -28,24 +28,11 @@
 
       <el-table-column width="200" label="图片">
         <template slot-scope="{row}">
-          <template v-if="row.edit">
-            <el-upload
-              class="avatar-uploader"
-              action="http://localhost:8090/upload/ossFile"
-              :show-file-list="false"
-              :on-success="handleUploadSuccess()"
-              :before-upload="beforeUpload"
-            >
-              <el-image v-if="row.image_url" :src="row.image_url" />
-            </el-upload>
-          </template>
-          <template v-else>
-            <el-image :src="row.image_url" :preview-src-list="[row.image_url]">
-              <div slot="placeholder" class="image-slot">
-                加载中<span class="dot">...</span>
-              </div>
-            </el-image>
-          </template>
+          <el-image :src="row.image_url" :preview-src-list="[row.image_url]">
+            <div slot="placeholder" class="image-slot">
+              加载中<span class="dot">...</span>
+            </div>
+          </el-image>
         </template>
       </el-table-column>
 
@@ -83,7 +70,7 @@
         </el-form-item>
         <el-form-item label="Status">
           <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
+            <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="Remark">
@@ -94,7 +81,7 @@
             style="width: 300px; height: 300px;"
             action="http://localhost:8090/upload/ossFile"
             :show-file-list="false"
-            :on-success="handleUploadSuccess()"
+            :on-success="handleUploadSuccess"
             :before-upload="beforeUpload"
           >
             <el-image v-if="temp.image_url" :src="temp.image_url" />
@@ -135,7 +122,7 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10
+        count: 10
       },
       temp: {
         id: undefined,
@@ -148,7 +135,16 @@ export default {
         update: 'Edit',
         create: 'Create'
       },
-      statusOptions: ['启用', '停用'],
+      statusOptions: [
+        {
+          value: 1,
+          label: '启用'
+        },
+        {
+          value: 0,
+          label: '禁用'
+        }
+      ],
       dialogFormVisible: false,
       dialogStatus: ''
     }
@@ -160,13 +156,7 @@ export default {
     async getList() {
       this.listLoading = true
       const { data } = await fetchList(this.listQuery)
-      const items = data.data
-      this.list = items.map(v => {
-        this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
-        v.originalTitle = v.title //  will be used when user click the cancel botton
-        v.originalRemark = v.remark
-        return v
-      })
+      this.list = data
       this.listLoading = false
     },
     resetTemp() {
@@ -196,6 +186,7 @@ export default {
     },
     handleModifyStatus(row, status) {
       this.temp = Object.assign({}, row) // copy obj
+      console.log(status)
       this.temp.status = status
       this.updateData()
     },
@@ -241,7 +232,10 @@ export default {
     },
     handleUploadSuccess(res, file) {
       // this.temp.image_url = file.url
-      console.log(this.temp.image_url)
+      console.log(res.data[0])
+      if (res.data[0]) {
+        this.temp.image_url = res.data[0]
+      }
     },
     beforeUpload(file) {
     }
