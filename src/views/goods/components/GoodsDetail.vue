@@ -77,11 +77,12 @@ import { fetchArticle } from '@/api/article'
 import { searchUser } from '@/api/remote-search'
 
 const defaultForm = {
-  status: 'draft',
+  id: undefined,
+  status: 1,
   title: '', // 商品名
   content: '', // 商品描述
-  excerpt: 'test', // 短描述
-  size: 'test', // 尺寸
+  excerpt: '', // 短描述
+  size: '', // 尺寸
   material: '', // 材料
   pack: '', // 打包方式
   qty: '', // 装箱量

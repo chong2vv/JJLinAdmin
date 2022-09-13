@@ -31,3 +31,11 @@ export function updateGoods(data) {
     data
   })
 }
+
+export function opGoods(data) {
+  return request({
+    url: '/vue-admin-template/user/op',
+    method: 'post',
+    data
+  })
+}

@@ -1,15 +1,15 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
+      <el-input v-model="listQuery.search_str" placeholder="搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.classify_id" placeholder="分类名" clearable class="filter-item" style="width: 130px" @change="handleFilter">
+        <el-option v-for="item in classList" :key="item.id" :label="item.title" :value="item.id" />
       </el-select>
-      <el-select v-model="listQuery.type" placeholder="Type" clearable class="filter-item" style="width: 130px">
-        <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
+      <el-select v-model="listQuery.status" placeholder="状态" clearable style="width: 140px" class="filter-item" @change="handleFilter">
+        <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
-      <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
-        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
+      <el-select v-model="listQuery.is_home_list" placeholder="首页展示" clearable style="width: 140px" class="filter-item" @change="handleFilter">
+        <el-option v-for="item in isHomeShowOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         Search
@@ -22,9 +22,6 @@
       <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-download" @click="handleDownload">
         Export
       </el-button>
-      <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
-        reviewer
-      </el-checkbox>
     </div>
 
     <el-table
@@ -35,9 +32,8 @@
       fit
       highlight-current-row
       style="width: 100%;"
-      @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+      <el-table-column label="ID" prop="id" align="center" width="80">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
@@ -65,14 +61,14 @@
       </el-table-column>
       <el-table-column label="访问量" align="center" width="95">
         <template slot-scope="{row}">
-          <span v-if="row.view" class="link-type" @click="handleFetchPv(row.view)">{{ row.view }}</span>
+          <span v-if="row.view" class="link-type">{{ row.view }}</span>
           <span v-else>0</span>
         </template>
       </el-table-column>
       <el-table-column label="状态" class-name="status-col" width="100">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
+            {{ row.status | statusLabel }}
           </el-tag>
         </template>
       </el-table-column>
@@ -102,22 +98,10 @@
 
 <script>
 import { fetchList } from '@/api/goods'
+import { fetchList as fetchClassList } from '@/api/classify'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-
-const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
-
-// arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
 
 export default {
   name: 'ComplexTable',
@@ -126,33 +110,38 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        '1': 'success',
+        '0': 'info',
+        '-1': 'danger'
       }
       return statusMap[status]
     },
-    typeFilter(type) {
-      return calendarTypeKeyValue[type]
+    statusLabel(status) {
+      const statusMap = {
+        '1': '上架中',
+        '0': '已下架',
+        '-1': '已删除'
+      }
+      return statusMap[status]
     }
   },
   data() {
     return {
       tableKey: 0,
       list: null,
+      classList: null,
       total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
         count: 20,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
+        search_str: undefined,
+        classify_id: undefined,
+        status: null,
+        is_home_list: null
       },
-      importanceOptions: [1, 2, 3],
-      calendarTypeOptions,
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: [-1, 0, 1],
+      isHomeShowOptions: [{ label: '是', value: true }, { label: '否', value: false }],
+      statusOptions: [{ label: '已下架', value: 0 }, { label: '上架中', value: 1 }],
       showReviewer: false,
       temp: {
         id: undefined,
@@ -181,8 +170,16 @@ export default {
   },
   created() {
     this.getList()
+    this.getClassList()
   },
   methods: {
+    getClassList() {
+      fetchClassList().then(response => {
+        this.classList = response.data
+        setTimeout(() => {
+        }, 2 * 1000)
+      })
+    },
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
@@ -205,20 +202,6 @@ export default {
         type: 'success'
       })
       row.status = status
-    },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
     },
     resetTemp() {
       this.temp = {
@@ -255,8 +238,8 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
+        const tHeader = ['id', 'create_at', 'title', 'content', 'excerpt', 'size', 'material', 'pack', 'qty', 'timer', 'cover_img', 'img_list', 'tags', 'categories', 'is_home_list']
+        const filterVal = ['id', 'create_at', 'title', 'content', 'excerpt', 'size', 'material', 'pack', 'qty', 'timer', 'cover_img', 'img_list', 'tags', 'categories', 'is_home_list']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,
@@ -268,16 +251,12 @@ export default {
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
+        if (j === 'create_at') {
           return parseTime(v[j])
         } else {
           return v[j]
         }
       }))
-    },
-    getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
     }
   }
 }
