@@ -177,7 +177,7 @@ export default {
       fetchClassList().then(response => {
         this.classList = response.data
         setTimeout(() => {
-        }, 2 * 1000)
+        }, 5 * 1000)
       })
     },
     getList() {

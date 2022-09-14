@@ -57,6 +57,7 @@ module.exports = [
       }
     }
   },
+
   {
     url: '/vue-admin-template/goods/detail',
     type: 'get',
@@ -72,4 +73,28 @@ module.exports = [
       }
     }
   },
+
+  {
+    url: '/vue-admin-template/goods/create',
+    type: 'post',
+    response: config => {
+      const data = config.body
+      data.id = 1111111
+      return {
+        code: 200,
+        data: data
+      }
+    }
+  },
+
+  {
+    url: '/vue-admin-template/goods/update',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 200,
+        data: 'success'
+      }
+    }
+  }
 ]

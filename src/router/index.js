@@ -87,7 +87,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'classify',
-        name: 'plan',
+        name: 'classify',
         component: () => import('@/views/classify/classify'),
         meta: { title: '分类', icon: 'table' }
       }

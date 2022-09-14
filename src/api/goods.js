@@ -16,7 +16,7 @@ export function fetchGoods(id) {
   })
 }
 
-export function createAGoods(data) {
+export function createGoods(data) {
   return request({
     url: '/vue-admin-template/goods/create',
     method: 'post',

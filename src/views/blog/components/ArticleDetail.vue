@@ -55,7 +55,7 @@
         <el-form-item prop="image_uri" style="margin-bottom: 30px;">
           <el-upload
             class="upload-demo"
-            action="http://localhost:8090/upload/ossFile"
+            :action="uploadUrl"
             :on-change="handleChange"
             :file-list="fileList"
           >
@@ -132,6 +132,7 @@ export default {
       postForm: Object.assign({}, defaultForm),
       loading: false,
       userListOptions: [],
+      uploadUrl: process.env.VUE_APP_UPLOAD_API,
       rules: {
         image_uri: [{ validator: validateRequire }],
         title: [{ validator: validateRequire }],

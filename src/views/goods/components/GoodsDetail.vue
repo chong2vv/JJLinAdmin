@@ -4,10 +4,10 @@
 
       <sticky :z-index="10" :class-name="'sub-navbar '+postForm.status">
         <el-button v-loading="loading" style="margin-left: 20px;margin-top: 12px" type="success" @click="submitForm">
-          Publish
+          发布
         </el-button>
-        <el-button v-loading="loading" type="warning" @click="coverImageUrl">
-          Draft
+        <el-button v-loading="loading" type="warning" @click="draftForm">
+          草稿
         </el-button>
       </sticky>
 
@@ -40,14 +40,20 @@
 
             <div class="postInfo-container">
               <el-row>
-                <el-col :span="8">
+                <el-col :span="12">
                   <el-form-item label-width="60px" label="分类:" class="postInfo-container-item">
                     <el-select v-model="postForm.classify" clearable class="filter-item" placeholder="选择分类">
                       <el-option v-for="item in classListOptions" :key="item.id" :label="item.title" :value="item.id" />
                     </el-select>
                   </el-form-item>
+                  <el-form-item label-width="200px" label="是否首页展示:" class="postInfo-container-item">
+                    <el-switch
+                      v-model="postForm.is_home_list"
+                      active-color="#13ce66"
+                      inactive-color="#ff4949"
+                    />
+                  </el-form-item>
                 </el-col>
-
               </el-row>
             </div>
           </el-col>
@@ -69,12 +75,12 @@
         <el-form-item prop="img_list" label="图片/视频" style="margin-bottom: 30px;">
           <el-upload
             class="upload-demo"
-            action="http://localhost:8090/upload/ossFile"
+            :action="uploadUrl"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :on-change="handleChange"
             multiple
-            :limit="8"
+            :limit="6"
             :on-exceed="handleExceed"
             :file-list="fileList"
           >
@@ -89,7 +95,7 @@
 <script>
 import Upload from '@/components/Upload/SingleImage3'
 import Sticky from '@/components/Sticky' // 粘性header组件
-import { fetchGoods } from '@/api/goods'
+import { fetchGoods, createGoods, updateGoods } from '@/api/goods'
 import { fetchList } from '@/api/classify'
 
 const defaultForm = {
@@ -106,6 +112,7 @@ const defaultForm = {
   cover_img: '', // 封面图
   img_list: [], // 图片数组
   tags: [], // 标签数组
+  classify_id: undefined,
   classify: {
     id: undefined,
     title: '',
@@ -125,6 +132,7 @@ export default {
   },
   data() {
     return {
+      uploadUrl: process.env.VUE_APP_UPLOAD_API,
       postForm: Object.assign({}, defaultForm),
       loading: false,
       classListOptions: [],
@@ -172,65 +180,102 @@ export default {
       const title = '编辑商品'
       document.title = `${title} - ${this.postForm.id}`
     },
+    // 提交信息，直接上架
     submitForm() {
+      console.log(this.fileList)
+      if (this.fileList.length > 0) {
+        this.postForm.img_list = this.fileList.map((item) => {
+          return item.response.data[0]
+        })
+      }
       console.log(this.postForm)
       this.$refs.postForm.validate(valid => {
         if (valid) {
-          this.loading = true
-          this.$notify({
-            title: '成功',
-            message: '发布文章成功',
-            type: 'success',
-            duration: 2000
-          })
           this.postForm.status = 1
-          this.loading = false
+          this.postForm.classify_id = this.postForm.classify.id
+          const data = this.postForm
+          if (this.isEdit) {
+            this.handleUpdateGoods(data)
+          } else {
+            this.handleCreateGoods(data)
+          }
         } else {
           console.log('error submit!!')
           return false
         }
       })
     },
+    // 草稿，为下架商品
     draftForm() {
-      if (this.postForm.content.length === 0 || this.postForm.title.length === 0) {
+      if (this.postForm.excerpt.length === 0 || this.postForm.title.length === 0) {
         this.$message({
-          message: '请填写必要的标题和内容',
+          message: '请填写必要的标题和简介',
           type: 'warning'
         })
         return
       }
-      this.$message({
-        message: '保存成功',
-        type: 'success',
-        showClose: true,
-        duration: 1000
-      })
-      this.postForm.status = 'draft'
+      if (this.fileList.length > 0) {
+        this.postForm.img_list = this.fileList.map((item) => {
+          return item.response.data[0]
+        })
+      }
+      this.postForm.classify_id = this.postForm.classify.id
+      this.postForm.status = 0
+      const data = this.postForm
+      if (this.isEdit) {
+        this.handleUpdateGoods(data)
+      } else {
+        this.handleCreateGoods(data)
+      }
     },
+    handleCreateGoods(data) {
+      this.loading = true
+      createGoods(data).then(response => {
+        this.loading = false
+        this.$notify({
+          title: '成功',
+          message: '发布商品成功',
+          type: 'success',
+          duration: 2000
+        })
+        setTimeout(() => {
+        }, 5 * 1000)
+      })
+    },
+    handleUpdateGoods(data) {
+      this.loading = true
+      updateGoods(data).then(response => {
+        this.loading = false
+        this.$notify({
+          title: '成功',
+          message: '更新商品成功',
+          type: 'success',
+          duration: 2000
+        })
+        setTimeout(() => {
+        }, 5 * 1000)
+      })
+    },
+    // 获取分类列表
     getRemoteClassList() {
       fetchList().then(response => {
         if (!response.data) return
-        console.log(response.data)
         this.classListOptions = response.data
       })
     },
-    coverImageUrl() {
-      console.log('==============')
-      console.log(this.fileList)
-      this.postForm.img_list = this.fileList.map((item) => {
-        return item.response.data[0]
-      })
-      console.log(this.postForm.img_list)
-    },
+    // 文件上传列表删除
     handleRemove(file, fileList) {
       console.log(file, fileList)
     },
+    // 文件上传列表预览
     handlePreview(file) {
       console.log(file)
     },
+    // 文件上传数量超出
     handleExceed(files, fileList) {
-
+      this.$message.warning(`当前限制选择 8 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
     },
+    // 文件上传列表变更
     handleChange(file, fileList) {
       this.fileList = fileList
     }

@@ -6,7 +6,7 @@
       :on-success="handleImageSuccess"
       class="image-uploader"
       drag
-      action="http://localhost:8090/upload/ossFile"
+      :action="uploadUrl"
     >
       <i class="el-icon-upload" />
       <div class="el-upload__text">
@@ -44,6 +44,7 @@ export default {
   },
   data() {
     return {
+      uploadUrl: process.env.VUE_APP_UPLOAD_API,
       tempUrl: ''
     }
   },
@@ -59,8 +60,10 @@ export default {
     emitInput(val) {
       this.$emit('input', val)
     },
-    handleImageSuccess(file) {
-      this.emitInput(file.files.file)
+    handleImageSuccess(res, file) {
+      if (res.data[0]) {
+        this.emitInput(res.data[0])
+      }
     }
   }
 }
