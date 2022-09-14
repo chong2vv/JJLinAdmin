@@ -15,6 +15,9 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import global_ from './Global' // 引用文件
+Vue.prototype.GLOBAL = global_ // 挂载到Vue实例上面
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

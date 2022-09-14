@@ -6,7 +6,7 @@
       :on-success="handleImageSuccess"
       class="image-uploader"
       drag
-      :action="uploadUrl"
+      :action="GLOBAL.base_upload_url"
     >
       <i class="el-icon-upload" />
       <div class="el-upload__text">
@@ -44,7 +44,6 @@ export default {
   },
   data() {
     return {
-      uploadUrl: process.env.VUE_APP_UPLOAD_API,
       tempUrl: ''
     }
   },

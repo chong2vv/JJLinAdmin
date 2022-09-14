@@ -75,7 +75,7 @@
         <el-form-item prop="img_list" label="图片/视频" style="margin-bottom: 30px;">
           <el-upload
             class="upload-demo"
-            :action="uploadUrl"
+            :action="GLOBAL.base_upload_url"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :on-change="handleChange"
@@ -132,7 +132,6 @@ export default {
   },
   data() {
     return {
-      uploadUrl: process.env.VUE_APP_UPLOAD_API,
       postForm: Object.assign({}, defaultForm),
       loading: false,
       classListOptions: [],

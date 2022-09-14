@@ -81,7 +81,7 @@
         <el-form-item size="medium" label="图片">
           <el-upload
             style="width: 300px; height: 300px;"
-            :action="uploadUrl"
+            :action="GLOBAL.base_upload_url"
             :show-file-list="false"
             :on-success="handleUploadSuccess"
             :before-upload="beforeUpload"
@@ -122,7 +122,6 @@ export default {
   },
   data() {
     return {
-      uploadUrl: process.env.VUE_APP_UPLOAD_API,
       list: null,
       listLoading: true,
       total: 0,

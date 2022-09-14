@@ -72,7 +72,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="头像">
-          <el-upload class="avatar-uploader" :action="uploadUrl" :show-file-list="false" :on-success="handleImageUploadSuccess" :before-upload="beforeImageUpload">
+          <el-upload class="avatar-uploader" :action="GLOBAL.base_upload_url" :show-file-list="false" :on-success="handleImageUploadSuccess" :before-upload="beforeImageUpload">
             <div v-if="temp.avatar">
               <img :src="temp.avatar" class="avatar">
             </div>
@@ -145,8 +145,7 @@ export default {
       dialogStatus: '',
       dialogImageUploadVisible: false,
       dialogImageUrl: '',
-      disabled: false,
-      uploadUrl: process.env.VUE_APP_UPLOAD_API
+      disabled: false
     }
   },
   created() {
