@@ -153,38 +153,12 @@ export const constantRoutes = [
   },
 
   {
-    path: '/plan',
-    component: Layout,
-    children: [
-      {
-        path: 'inline-edit-table',
-        name: 'plan',
-        component: () => import('@/views/plan/inline-edit-table'),
-        meta: { title: '进度', icon: 'tab' }
-      }
-    ]
-  },
-
-  {
-    path: '/banner',
-    component: Layout,
-    children: [
-      {
-        path: 'banner',
-        name: 'banner',
-        component: () => import('@/views/banner/banner'),
-        meta: { title: 'banner', icon: 'theme' }
-      }
-    ]
-  },
-
-  {
     path: 'external-link',
     component: Layout,
     children: [
       {
-        path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-        meta: { title: 'External Link', icon: 'link' }
+        path: 'http://8.142.125.160:9528/',
+        meta: { title: 'HouseIn官网', icon: 'link' }
       }
     ]
   },

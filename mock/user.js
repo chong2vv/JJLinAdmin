@@ -105,7 +105,6 @@ module.exports = [
       }
 
       const pageList = mockList.filter((item, index) => index < count * page && index >= count * (page - 1) &&item.status !== -1)
-      console.log(pageList)
       return {
         code: 200,
         total_count: mockList.length,
