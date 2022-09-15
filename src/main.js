@@ -15,6 +15,12 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import * as filters from './filters' // global filters
+// register global utility filters
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
+
 import global_ from './Global' // 引用文件
 Vue.prototype.GLOBAL = global_ // 挂载到Vue实例上面
 

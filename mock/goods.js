@@ -37,10 +37,10 @@ module.exports = [
     url: '/vue-admin-template/goods/list',
     type: 'get',
     response: config => {
-      const { title, page = 1, count = 20, sort } = config.query
+      const { search_str, page = 1, count = 20, sort } = config.query
 
       let mockList = List.filter(item => {
-        if (title && item.title.indexOf(title) < 0) return false
+        if (search_str && item.title.indexOf(search_str) < 0) return false
         return true
       })
 

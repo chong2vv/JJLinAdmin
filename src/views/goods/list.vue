@@ -113,7 +113,7 @@
         accept=".xlsx,.xls,.cvs,.CVS.XLSX,.XLS"
         :multiple="false"
         :limit="1"
-        action="https://jsonplaceholder.typicode.com/posts/"
+        :action="GLOBAL.base_excel_upload_url"
         :auto-upload="false"
         :on-success="handleUploadSuccess"
         :on-error="handleUploadError"
@@ -316,6 +316,7 @@ export default {
     handleUploadSuccess(response, file, fileList) {
       this.isUploadError = false
       this.upLoading = false
+      this.dialogUploadVisible = false
       this.$refs.upload.clearFiles()
       this.$notify({
         title: 'Success',

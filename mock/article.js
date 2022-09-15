@@ -9,19 +9,20 @@ const image_uri = 'https://wpimg.wallstcn.com/e4558086-631c-425c-9430-56ffb46e70
 for (let i = 0; i < count; i++) {
   List.push(Mock.mock({
     id: '@increment',
-    timestamp: +Mock.Random.date('T'),
+    create_at: '@datetime',
     author: '@first',
     author_id: '@increment',
+    img: image_uri,
     title: '@title(5, 10)',
     excerpt: 'mock data',
     body: baseContent,
-    'categories|2': ['CN', 'US', 'JP', 'EU'],
+    categories: {
+      id: '@increment',
+      title: '分类1'
+    },
     tags:  ['CN', 'US', 'JP', 'EU'],
-    'status|1': ['published', 'draft'],
-    create_at: '@datetime',
-    comment_disabled: true,
-    view: '@integer(300, 5000)',
-    img: image_uri
+    'status|1': [0, 1],
+    view: '@integer(300, 5000)'
   }))
 }
 
@@ -30,10 +31,10 @@ module.exports = [
     url: '/vue-admin-template/article/list',
     type: 'get',
     response: config => {
-      const { title, page = 1, limit = 20, sort } = config.query
+      const { search_str, page = 1, limit = 20, sort } = config.query
 
       let mockList = List.filter(item => {
-        if (title && item.title.indexOf(title) < 0) return false
+        if (search_str && item.title.indexOf(search_str) < 0) return false
         return true
       })
 
@@ -45,10 +46,8 @@ module.exports = [
 
       return {
         code: 200,
-        data: {
-          total: mockList.length,
-          items: pageList
-        }
+        data: pageList,
+        total_count: mockList.length
       }
     }
   },

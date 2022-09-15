@@ -1,5 +1,15 @@
 <template>
   <div class="app-container">
+    <div class="filter-container">
+      <el-input v-model="listQuery.search_str" placeholder="搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.status" placeholder="状态" clearable style="width: 140px" class="filter-item" @change="handleFilter">
+        <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
+      </el-select>
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        Search
+      </el-button>
+    </div>
+
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
       <el-table-column align="center" label="ID" width="80">
         <template slot-scope="scope">
@@ -19,10 +29,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column class-name="status-col" label="Status" width="110">
+      <el-table-column label="状态" class-name="status-col" width="100">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
+            {{ row.status | statusLabel }}
           </el-tag>
         </template>
       </el-table-column>
@@ -53,16 +63,26 @@
 <script>
 import { fetchList } from '@/api/article'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import waves from '@/directive/waves' // waves directive
 
 export default {
   name: 'ArticleList',
   components: { Pagination },
+  directives: { waves },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        '1': 'success',
+        '0': 'info',
+        '-1': 'danger'
+      }
+      return statusMap[status]
+    },
+    statusLabel(status) {
+      const statusMap = {
+        '1': '上架中',
+        '0': '已下架',
+        '-1': '已删除'
       }
       return statusMap[status]
     }
@@ -72,8 +92,11 @@ export default {
       list: null,
       total: 0,
       listLoading: true,
+      statusOptions: [{ label: '已下架', value: 0 }, { label: '上架中', value: 1 }],
       listQuery: {
         page: 1,
+        search_str: undefined,
+        status: null,
         limit: 20
       }
     }
@@ -85,10 +108,14 @@ export default {
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
+        this.list = response.data
+        this.total = response.total_count
         this.listLoading = false
       })
+    },
+    handleFilter() {
+      this.listQuery.page = 1
+      this.getList()
     }
   }
 }
