@@ -2,8 +2,8 @@
   <div class="createPost-container">
     <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
 
-      <sticky :z-index="10" :class-name="'sub-navbar '+postForm.status">
-        <SourceUrlDropdown v-model="postForm.source_uri" />
+      <sticky :z-index="10" :class-name="'sub-navbar '+postForm.status" style="margin-top: 20px">
+        <SourceUrlDropdown v-model="postForm.source_uri" style="margin-left: 10px" />
         <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm">
           Publish
         </el-button>
@@ -15,24 +15,22 @@
       <div class="createPost-main-container">
         <el-row>
           <el-col :span="24">
-            <el-form-item style="margin-bottom: 40px;" prop="标题">
+            <el-form-item style="margin-bottom: 40px;" prop="title">
               <MDinput v-model="postForm.title" :maxlength="100" name="name" required>
-                Title
+                标题
               </MDinput>
             </el-form-item>
 
             <div class="postInfo-container">
               <el-row>
                 <el-col :span="8">
-                  <el-form-item label-width="60px" label="Author:" class="postInfo-container-item">
-                    <el-select v-model="postForm.author" :remote-method="getRemoteUserList" filterable default-first-option remote placeholder="Search user">
-                      <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item" :value="item" />
-                    </el-select>
+                  <el-form-item label-width="60px" label="作者:" class="postInfo-container-item">
+                    <el-input v-model="postForm.author" />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="10">
-                  <el-form-item label-width="120px" label="Publish Time:" class="postInfo-container-item">
+                  <el-form-item label-width="120px" label="发表时间:" class="postInfo-container-item">
                     <el-date-picker v-model="displayTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="Select date and time" />
                   </el-form-item>
                 </el-col>
@@ -41,7 +39,7 @@
           </el-col>
         </el-row>
 
-        <el-form-item style="margin-bottom: 40px;" label-width="70px" label="Summary:">
+        <el-form-item style="margin-bottom: 40px;" label-width="60px" label="简介:">
           <el-input v-model="postForm.excerpt" :rows="1" type="textarea" class="article-textarea" autosize placeholder="Please enter the content" />
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}words</span>
         </el-form-item>
@@ -50,17 +48,10 @@
           <Tinymce ref="editor" v-model="postForm.body" :height="400" />
         </el-form-item>
 
-        <el-form-item prop="image_uri" style="margin-bottom: 30px;">
-          <el-upload
-            class="upload-demo"
-            :action="GLOBAL.base_upload_url"
-            :on-change="handleChange"
-            :file-list="fileList"
-          >
-            <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-          </el-upload>
+        <el-form-item prop="img" label="封面图" style="margin-bottom: 30px;">
+          <Upload v-model="postForm.img" />
         </el-form-item>
+
       </div>
     </el-form>
   </div>
@@ -72,8 +63,8 @@ import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { validURL } from '@/utils/validate'
 import { fetchArticle, createArticle, updateArticle } from '@/api/article'
-import { searchUser } from '@/api/remote-search'
 import { SourceUrlDropdown } from './Dropdown'
+import Upload from '@/components/Upload/SingleImage3'
 
 const defaultForm = {
   status: 'draft',
@@ -85,14 +76,13 @@ const defaultForm = {
   create_at: undefined, // 前台展示时间
   id: undefined,
   platforms: ['a-platform'],
-  author_id: undefined,
   author: '',
   view: ''
 }
 
 export default {
   name: 'ArticleDetail',
-  components: { Tinymce, MDinput, Sticky, SourceUrlDropdown },
+  components: { Tinymce, MDinput, Sticky, SourceUrlDropdown, Upload },
   props: {
     isEdit: {
       type: Boolean,
@@ -136,8 +126,7 @@ export default {
         body: [{ validator: validateRequire }],
         img: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
-      tempRoute: {},
-      fileList: []
+      tempRoute: {}
     }
   },
   computed: {
@@ -239,15 +228,6 @@ export default {
           duration: 2000
         })
       })
-    },
-    getRemoteUserList(query) {
-      searchUser(query).then(response => {
-        if (!response.data.items) return
-        this.userListOptions = response.data.items.map(v => v.name)
-      })
-    },
-    handleChange(file, fileList) {
-      this.fileList = fileList.slice(-3)
     }
   }
 }

@@ -11,7 +11,6 @@ for (let i = 0; i < count; i++) {
     id: '@increment',
     create_at: '@datetime',
     author: '@first',
-    author_id: '@increment',
     img: image_uri,
     title: '@title(5, 10)',
     excerpt: 'mock data',

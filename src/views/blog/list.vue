@@ -11,7 +11,7 @@
     </div>
 
     <el-table v-loading="listLoading" :data="list" fixed border fit highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="ID" width="80">
+      <el-table-column align="center" fixed label="ID" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
@@ -27,7 +27,7 @@
 
       <el-table-column width="140" label="封面">
         <template slot-scope="{row}">
-          <el-image :src="row.cover_img" :preview-src-list="[row.cover_img]" />
+          <el-image :src="row.img" :preview-src-list="[row.img]" />
         </template>
       </el-table-column>
 
