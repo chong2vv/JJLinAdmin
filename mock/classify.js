@@ -64,13 +64,11 @@ module.exports = [
     type: 'post',
     response: config => {
       const { title, remark, status } = config.body
-      console.log(config.body)
       let data = {}
       data.title = title
       data.remark = remark
       data.status = status
       data.id = 111222
-      console.log(data.title)
       return {
         code: 200,
         data: data

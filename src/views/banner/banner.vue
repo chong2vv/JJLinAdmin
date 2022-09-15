@@ -307,13 +307,11 @@ export default {
     },
     handleImageUploadSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
-      console.log('============= 上传的' + this.imageUrl)
     },
     handleRemove() {
-      console.log('shanchu ?=========')
+
     },
     handlePictureCardPreview(url) {
-      console.log('全屏')
       this.dialogImageUrl = url
       this.dialogImageUploadVisible = true
     },

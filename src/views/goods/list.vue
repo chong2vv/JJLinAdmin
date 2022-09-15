@@ -47,38 +47,45 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
+
       <el-table-column fixed label="商品名" min-width="100px">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.title }}</span>
         </template>
       </el-table-column>
+
       <el-table-column width="140" label="封面">
         <template slot-scope="{row}">
           <el-image :src="row.cover_img" :preview-src-list="[row.cover_img]" />
         </template>
       </el-table-column>
+
       <el-table-column label="简介" min-width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.excerpt }}</span>
         </template>
       </el-table-column>
+
       <el-table-column label="分类" width="110px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.classify.title }}</span>
         </template>
       </el-table-column>
+
       <el-table-column label="首页显示" width="80px">
         <template slot-scope="{row}">
           <span v-if="row.is_home_list" style="color:green;">是</span>
           <span v-else style="color:red;">否</span>
         </template>
       </el-table-column>
+
       <el-table-column label="访问量" align="center" width="95">
         <template slot-scope="{row}">
           <span v-if="row.view" class="link-type">{{ row.view }}</span>
           <span v-else>0</span>
         </template>
       </el-table-column>
+
       <el-table-column label="状态" class-name="status-col" width="100">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
@@ -86,6 +93,7 @@
           </el-tag>
         </template>
       </el-table-column>
+
       <el-table-column fixed="right" label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <router-link :to="'/goods/edit/'+row.id">

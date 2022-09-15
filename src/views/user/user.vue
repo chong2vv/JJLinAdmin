@@ -239,7 +239,6 @@ export default {
       })
     },
     handleImageUploadSuccess(res, file) {
-      console.log(res.data[0])
       if (res.data[0]) {
         this.temp.avatar = res.data[0]
       }

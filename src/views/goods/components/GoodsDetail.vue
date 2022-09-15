@@ -205,13 +205,11 @@ export default {
     },
     // 提交信息，直接上架
     submitForm() {
-      console.log(this.fileList)
       if (this.fileList.length > 0) {
         this.postForm.img_list = this.fileList.map((item) => {
           return item.response.data[0]
         })
       }
-      console.log(this.postForm)
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.postForm.status = 1

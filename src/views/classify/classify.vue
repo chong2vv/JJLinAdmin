@@ -192,7 +192,6 @@ export default {
     },
     handleModifyStatus(row, status) {
       this.temp = Object.assign({}, row) // copy obj
-      console.log(status)
       this.temp.status = status
       this.updateData()
     },
@@ -237,8 +236,6 @@ export default {
       })
     },
     handleUploadSuccess(res, file) {
-      // this.temp.image_url = file.url
-      console.log(res.data[0])
       if (res.data[0]) {
         this.temp.image_url = res.data[0]
       }

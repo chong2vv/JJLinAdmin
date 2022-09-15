@@ -71,7 +71,7 @@ import Tinymce from '@/components/Tinymce'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { validURL } from '@/utils/validate'
-import { fetchArticle } from '@/api/article'
+import { fetchArticle, createArticle, updateArticle } from '@/api/article'
 import { searchUser } from '@/api/remote-search'
 import { SourceUrlDropdown } from './Dropdown'
 
@@ -85,7 +85,7 @@ const defaultForm = {
   create_at: undefined, // 前台展示时间
   id: undefined,
   platforms: ['a-platform'],
-  comment_disabled: false,
+  author_id: undefined,
   author: '',
   view: ''
 }
@@ -117,10 +117,10 @@ export default {
           callback()
         } else {
           this.$message({
-            message: '外链url填写不正确',
+            message: '图片url填写不正确',
             type: 'error'
           })
-          callback(new Error('外链url填写不正确'))
+          callback(new Error('图片url填写不正确'))
         }
       } else {
         callback()
@@ -131,10 +131,10 @@ export default {
       loading: false,
       userListOptions: [],
       rules: {
-        image_uri: [{ validator: validateRequire }],
+        excerpt: [{ validator: validateRequire }],
         title: [{ validator: validateRequire }],
-        content: [{ validator: validateRequire }],
-        source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
+        body: [{ validator: validateRequire }],
+        img: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
       tempRoute: {},
       fileList: []
@@ -145,10 +145,6 @@ export default {
       return this.postForm.excerpt.length
     },
     displayTime: {
-      // set and get is useful when the data
-      // returned by the back end api is different from the front end
-      // back end return => "2013-06-25 06:59:25"
-      // front end need timestamp => 1372114765000
       get() {
         return (+new Date(this.postForm.create_at))
       },
@@ -162,7 +158,6 @@ export default {
       const id = this.$route.params && this.$route.params.id
       this.fetchData(id)
     }
-
     // Why need to make a copy of this.$route here?
     // Because if you enter this page and quickly switch tag, may be in the execution of the setTagsViewTitle function, this.$route is no longer pointing to the current page
     // https://github.com/PanJiaChen/vue-element-admin/issues/1221
@@ -172,14 +167,8 @@ export default {
     fetchData(id) {
       fetchArticle(id).then(response => {
         this.postForm = response.data
-
-        // just for test
-        this.postForm.title += `   Article Id:${this.postForm.id}`
-        this.postForm.excerpt += `   Article Id:${this.postForm.id}`
-
         // set tagsview title
         this.setTagsViewTitle()
-
         // set page title
         this.setPageTitle()
       }).catch(err => {
@@ -187,7 +176,7 @@ export default {
       })
     },
     setTagsViewTitle() {
-      const title = 'Edit Article'
+      const title = 'Edit Blog'
       const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.postForm.id}` })
       this.$store.dispatch('tagsView/updateVisitedView', route)
     },
@@ -196,18 +185,15 @@ export default {
       document.title = `${title} - ${this.postForm.id}`
     },
     submitForm() {
-      console.log(this.postForm)
       this.$refs.postForm.validate(valid => {
         if (valid) {
-          this.loading = true
-          this.$notify({
-            title: '成功',
-            message: '发布文章成功',
-            type: 'success',
-            duration: 2000
-          })
-          this.postForm.status = 'published'
-          this.loading = false
+          this.postForm.status = 1
+          const data = this.postForm
+          if (this.isEdit) {
+            this.handleUpdateArticle(data)
+          } else {
+            this.handleCreateArticle(data)
+          }
         } else {
           console.log('error submit!!')
           return false
@@ -215,20 +201,44 @@ export default {
       })
     },
     draftForm() {
-      if (this.postForm.content.length === 0 || this.postForm.title.length === 0) {
+      if (this.postForm.body.length === 0 || this.postForm.title.length === 0) {
         this.$message({
           message: '请填写必要的标题和内容',
           type: 'warning'
         })
         return
       }
-      this.$message({
-        message: '保存成功',
-        type: 'success',
-        showClose: true,
-        duration: 1000
+      this.postForm.status = 0
+      const data = this.postForm
+      if (this.isEdit) {
+        this.handleUpdateArticle(data)
+      } else {
+        this.handleCreateArticle(data)
+      }
+    },
+    handleCreateArticle(data) {
+      this.loading = true
+      createArticle(data).then(response => {
+        this.loading = false
+        this.$notify({
+          title: '成功',
+          message: '发布商品成功',
+          type: 'success',
+          duration: 2000
+        })
       })
-      this.postForm.status = 'draft'
+    },
+    handleUpdateArticle(data) {
+      this.loading = true
+      updateArticle(data).then(response => {
+        this.loading = false
+        this.$notify({
+          title: '成功',
+          message: '更新商品成功',
+          type: 'success',
+          duration: 2000
+        })
+      })
     },
     getRemoteUserList(query) {
       searchUser(query).then(response => {
@@ -237,11 +247,6 @@ export default {
       })
     },
     handleChange(file, fileList) {
-      console.log('===== 上传成功 ========' + file)
-      if (file.response) {
-        console.log(file.response.message)
-      }
-
       this.fileList = fileList.slice(-3)
     }
   }

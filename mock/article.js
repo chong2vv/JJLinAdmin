@@ -28,10 +28,10 @@ for (let i = 0; i < count; i++) {
 
 module.exports = [
   {
-    url: '/vue-admin-template/article/list',
+    url: '/vue-admin-template/blog/list',
     type: 'get',
     response: config => {
-      const { search_str, page = 1, limit = 20, sort } = config.query
+      const { search_str, page = 1, count = 20, sort } = config.query
 
       let mockList = List.filter(item => {
         if (search_str && item.title.indexOf(search_str) < 0) return false
@@ -42,7 +42,7 @@ module.exports = [
         mockList = mockList.reverse()
       }
 
-      const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))
+      const pageList = mockList.filter((item, index) => index < count * page && index >= count * (page - 1))
 
       return {
         code: 200,
@@ -53,7 +53,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/article/detail',
+    url: '/vue-admin-template/blog/detail',
     type: 'get',
     response: config => {
       const { id } = config.query
@@ -69,7 +69,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/article/pv',
+    url: '/vue-admin-template/blog/pv',
     type: 'get',
     response: _ => {
       return {
@@ -87,7 +87,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/article/create',
+    url: '/vue-admin-template/blog/create',
     type: 'post',
     response: _ => {
       return {
@@ -98,7 +98,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/article/update',
+    url: '/vue-admin-template/blog/update',
     type: 'post',
     response: _ => {
       return {
