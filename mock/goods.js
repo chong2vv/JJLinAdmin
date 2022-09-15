@@ -28,7 +28,7 @@ for (let i = 0; i < count; i++) {
     timer: '25-30days',
     cover_img: image_uri,
     img_list: [image_uri, image_uri, image_uri],
-    'is_home_list|1': [true, false]
+    'is_home_list|1': [0, 1]
   }))
 }
 

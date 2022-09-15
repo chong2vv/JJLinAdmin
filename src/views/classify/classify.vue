@@ -20,19 +20,19 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="120px" label="备注">
-        <template slot-scope="{row}">
-          <span>{{ row.remark }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="200" label="图片">
+      <el-table-column width="100" label="图标">
         <template slot-scope="{row}">
           <el-image :src="row.image_url" :preview-src-list="[row.image_url]">
             <div slot="placeholder" class="image-slot">
               加载中<span class="dot">...</span>
             </div>
           </el-image>
+        </template>
+      </el-table-column>
+
+      <el-table-column min-width="120px" label="备注">
+        <template slot-scope="{row}">
+          <span>{{ row.remark }}</span>
         </template>
       </el-table-column>
 

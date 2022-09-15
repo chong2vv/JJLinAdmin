@@ -22,28 +22,42 @@
       <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-download" @click="handleDownload">
         Export
       </el-button>
+      <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-upload" @click="dialogUploadVisible = true">
+        UploadExcel
+      </el-button>
     </div>
 
     <el-table
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
+      stripe
       border
       fit
       highlight-current-row
       style="width: 100%;"
+      @selection-change="handleSelectionChange"
     >
-      <el-table-column label="ID" prop="id" align="center" width="80">
+      <el-table-column
+        type="selection"
+        width="55"
+      />
+      <el-table-column fixed label="ID" prop="id" align="center" width="80">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商品名" min-width="100px">
+      <el-table-column fixed label="商品名" min-width="100px">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.title }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="简介" min-width="250px" align="center">
+      <el-table-column width="140" label="封面">
+        <template slot-scope="{row}">
+          <el-image :src="row.cover_img" :preview-src-list="[row.cover_img]" />
+        </template>
+      </el-table-column>
+      <el-table-column label="简介" min-width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.excerpt }}</span>
         </template>
@@ -72,8 +86,8 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
+      <el-table-column fixed="right" label="操作" align="center" width="230" class-name="small-padding fixed-width">
+        <template slot-scope="{row}">
           <router-link :to="'/goods/edit/'+row.id">
             <el-button type="primary" size="small" icon="el-icon-edit">
               编辑
@@ -85,13 +99,40 @@
           <el-button v-if="row.status !== 0" size="mini" @click="handleModifyStatus(row,0)">
             下架
           </el-button>
-          <el-button v-if="row.status !== -1" size="mini" type="danger" @click="handleDelete(row,$index)">
-            删除
+          <el-button v-if="row.status !== -1" size="mini" type="danger" @click="handleExport(row)">
+            导出
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
+    <el-dialog v-loading="upLoading" :visible.sync="dialogUploadVisible" :before-close="handleUploadClose">
+      <el-upload
+        ref="upload"
+        class="upload-demo"
+        accept=".xlsx,.xls,.cvs,.CVS.XLSX,.XLS"
+        :multiple="false"
+        :limit="1"
+        action="https://jsonplaceholder.typicode.com/posts/"
+        :auto-upload="false"
+        :on-success="handleUploadSuccess"
+        :on-error="handleUploadError"
+        :on-change="handleUploadChange"
+        :file-list="uploadList"
+      >
+        <el-button slot="trigger" size="small" type="primary">
+          选取导入的Excel文件
+        </el-button>
+      </el-upload>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogUploadVisible = false">
+          取 消
+        </el-button>
+        <el-button type="primary" @click="startUpload">
+          上传
+        </el-button>
+      </span>
+    </el-dialog>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.count" @pagination="getList" />
   </div>
 </template>
@@ -127,11 +168,16 @@ export default {
   },
   data() {
     return {
+      dialogUploadVisible: false,
+      isUploadError: false,
+      uploadList: [],
       tableKey: 0,
       list: null,
+      selectList: null,
       classList: null,
       total: 0,
       listLoading: true,
+      upLoading: false,
       listQuery: {
         page: 1,
         count: 20,
@@ -162,7 +208,7 @@ export default {
           title: '',
           image_url: ''
         }, // 分类
-        is_home_list: true, // 是否首页展示
+        is_home_list: 0, // 是否首页展示
         view: 0
       },
       downloadLoading: false
@@ -173,36 +219,6 @@ export default {
     this.getClassList()
   },
   methods: {
-    getClassList() {
-      fetchClassList().then(response => {
-        this.classList = response.data
-        setTimeout(() => {
-        }, 5 * 1000)
-      })
-    },
-    getList() {
-      this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        this.list = response.data
-        this.total = response.total_count
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
-    },
-    handleFilter() {
-      this.listQuery.page = 1
-      this.getList()
-    },
-    handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作Success',
-        type: 'success'
-      })
-      row.status = status
-    },
     resetTemp() {
       this.temp = {
         id: undefined,
@@ -223,17 +239,56 @@ export default {
           title: '',
           image_url: ''
         }, // 分类
-        is_home_list: true // 是否首页展示
+        is_home_list: 0 // 是否首页展示
       }
     },
-    handleDelete(row, index) {
-      this.$notify({
-        title: 'Success',
-        message: 'Delete Successfully',
-        type: 'success',
-        duration: 2000
+    getClassList() {
+      fetchClassList().then(response => {
+        this.classList = response.data
       })
-      this.list.splice(index, 1)
+    },
+    getList() {
+      this.listLoading = true
+      fetchList(this.listQuery).then(response => {
+        this.list = response.data
+        this.total = response.total_count
+        this.listLoading = false
+      })
+    },
+    handleSelectionChange(val) {
+      this.selectList = val
+    },
+    handleFilter() {
+      this.listQuery.page = 1
+      this.getList()
+    },
+    handleModifyStatus(row, status) {
+      this.$message({
+        message: '操作Success',
+        type: 'success'
+      })
+      row.status = status
+    },
+    handleExport(row) {
+      this.temp = Object.assign({}, row) // copy obj
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['id', 'create_at', 'title', 'content', 'excerpt', 'size', 'material', 'pack', 'qty', 'timer', 'cover_img', 'img_list', 'tags', 'categories', 'is_home_list']
+        const filterVal = ['id', 'create_at', 'title', 'content', 'excerpt', 'size', 'material', 'pack', 'qty', 'timer', 'cover_img', 'img_list', 'tags', 'categories', 'is_home_list']
+        const data = [this.temp].map(v => filterVal.map(j => {
+          if (j === 'create_at') {
+            return parseTime(v[j])
+          } else {
+            return v[j]
+          }
+        }))
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: 'table-list'
+        })
+        this.downloadLoading = false
+      })
     },
     handleDownload() {
       this.downloadLoading = true
@@ -248,6 +303,44 @@ export default {
         })
         this.downloadLoading = false
       })
+    },
+    startUpload() {
+      if (this.uploadList.length === 0) {
+        this.$message.error('请选择Excel文件')
+        return
+      }
+      this.isUploadError = false
+      this.upLoading = true
+      this.$refs.upload.submit()
+    },
+    handleUploadSuccess(response, file, fileList) {
+      this.isUploadError = false
+      this.upLoading = false
+      this.$refs.upload.clearFiles()
+      this.$notify({
+        title: 'Success',
+        message: '上传成功',
+        type: 'success',
+        duration: 2000
+      })
+    },
+    handleUploadError() {
+      this.isUploadError = false
+      this.upLoading = false
+      this.$notify({
+        title: 'Error',
+        message: '上传失败',
+        type: 'error',
+        duration: 2000
+      })
+    },
+    handleUploadChange(file, fileList) {
+      this.uploadList = fileList
+    },
+    handleUploadClose(done) {
+      if (!this.isUploadError) {
+        done()
+      }
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {

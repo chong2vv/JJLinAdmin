@@ -208,9 +208,6 @@ export default {
         })
         row.status = status
         self.resetTemp()
-        setTimeout(() => {
-          self.listLoading = false
-        }, 5 * 1000)
       })
     },
     handleModifyStatusAndClose() {
@@ -225,9 +222,7 @@ export default {
           message: '操作Success',
           type: 'success'
         })
-        setTimeout(() => {
-          self.listLoading = false
-        }, 5 * 1000)
+        self.listLoading = false
       })
     },
     viewDetail(row) {

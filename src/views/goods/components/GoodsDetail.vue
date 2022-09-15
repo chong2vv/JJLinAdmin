@@ -46,7 +46,7 @@
                       <el-option v-for="item in classListOptions" :key="item.id" :label="item.title" :value="item.id" />
                     </el-select>
                   </el-form-item>
-                  <el-form-item label-width="200px" label="是否首页展示:" class="postInfo-container-item">
+                  <el-form-item label-width="120px" label="首页展示:" class="postInfo-container-item">
                     <el-switch
                       v-model="postForm.is_home_list"
                       active-color="#13ce66"
@@ -58,6 +58,28 @@
             </div>
           </el-col>
         </el-row>
+
+        <el-form-item label="标签">
+          <el-tag
+            v-for="tag in postForm.tags"
+            :key="tag"
+            closable
+            :disable-transitions="false"
+            @close="handleTagClose(tag)"
+          >
+            {{ tag }}
+          </el-tag>
+          <el-input
+            v-if="inputVisible"
+            ref="saveTagInput"
+            v-model="inputValue"
+            class="input-new-tag"
+            size="small"
+            @keyup.enter.native="handleTagInputConfirm"
+            @blur="handleTagInputConfirm"
+          />
+          <el-button v-else class="button-new-tag" size="small" @click="showTagInput">+ 新标签</el-button>
+        </el-form-item>
 
         <el-form-item label="简介:">
           <el-input v-model="postForm.excerpt" type="textarea" :autosize="{ minRows: 3, maxRows: 6}" placeholder="编辑内容" />
@@ -118,7 +140,7 @@ const defaultForm = {
     title: '',
     image_url: ''
   }, // 分类
-  is_home_list: true // 是否首页展示
+  is_home_list: 0 // 是否首页展示
 }
 
 export default {
@@ -137,7 +159,9 @@ export default {
       classListOptions: [],
       tempRoute: {},
       fileList: [],
-      value1: []
+      value1: [],
+      inputVisible: false, // 是否可编辑标签
+      inputValue: '' // 新输入标签值
     }
   },
   computed: {
@@ -237,8 +261,6 @@ export default {
           type: 'success',
           duration: 2000
         })
-        setTimeout(() => {
-        }, 5 * 1000)
       })
     },
     handleUpdateGoods(data) {
@@ -251,8 +273,6 @@ export default {
           type: 'success',
           duration: 2000
         })
-        setTimeout(() => {
-        }, 5 * 1000)
       })
     },
     // 获取分类列表
@@ -277,6 +297,26 @@ export default {
     // 文件上传列表变更
     handleChange(file, fileList) {
       this.fileList = fileList
+    },
+    // 取消标签输入
+    handleTagClose(tag) {
+      this.postForm.tags.splice(this.postForm.tags.indexOf(tag), 1)
+    },
+    // 显示标签编辑框
+    showTagInput() {
+      this.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+    // 添加最新输入的标签
+    handleTagInputConfirm() {
+      const inputValue = this.inputValue
+      if (inputValue) {
+        this.postForm.tags.push(inputValue)
+      }
+      this.inputVisible = false
+      this.inputValue = ''
     }
   }
 }
