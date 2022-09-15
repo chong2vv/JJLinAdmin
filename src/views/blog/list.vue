@@ -17,11 +17,17 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="300px" fixed label="标题">
+      <el-table-column min-width="120px" fixed label="标题">
         <template slot-scope="{row}">
           <router-link :to="'/blog/edit/'+row.id" class="link-type">
             <span>{{ row.title }}</span>
           </router-link>
+        </template>
+      </el-table-column>
+
+      <el-table-column min-width="120px" align="center" label="简介">
+        <template slot-scope="scope">
+          <span>{{ scope.row.excerpt }}</span>
         </template>
       </el-table-column>
 
@@ -51,13 +57,25 @@
         </template>
       </el-table-column>
 
-      <el-table-column fixed="right" align="center" label="操作" width="120">
+      <el-table-column fixed="right" label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <router-link :to="'/blog/edit/'+scope.row.id">
             <el-button type="primary" size="small" icon="el-icon-edit">
-              Edit
+              编辑
             </el-button>
           </router-link>
+
+          <el-button v-if="scope.row.status !== 1" size="mini" type="success" style="margin-left: 10px;" @click="handleModifyStatus(row,1)">
+            上架
+          </el-button>
+
+          <el-button v-if="scope.row.status !== 0" size="mini" style="margin-left: 10px;" @click="handleModifyStatus(row,0)">
+            下架
+          </el-button>
+
+          <el-button type="primary" size="small" style="margin-left: 10px;" @click="handleExport(scope.row)">
+            预览
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -69,7 +87,7 @@
 <script>
 import { fetchList } from '@/api/article'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
-import waves from '@/directive/waves' // waves directive
+import waves from '@/directive/waves'
 
 export default {
   name: 'ArticleList',
@@ -122,6 +140,10 @@ export default {
     handleFilter() {
       this.listQuery.page = 1
       this.getList()
+    },
+    handleExport(row) {
+      const openUrl = process.env.VUE_APP_WEB_URL + 'blog-detail/' + row.id
+      window.open(openUrl, '_blank')
     }
   }
 }

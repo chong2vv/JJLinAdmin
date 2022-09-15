@@ -44,6 +44,28 @@
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}words</span>
         </el-form-item>
 
+        <el-form-item label="标签">
+          <el-tag
+            v-for="tag in postForm.tags"
+            :key="tag"
+            closable
+            :disable-transitions="false"
+            @close="handleTagClose(tag)"
+          >
+            {{ tag }}
+          </el-tag>
+          <el-input
+            v-if="inputVisible"
+            ref="saveTagInput"
+            v-model="inputValue"
+            class="input-new-tag"
+            size="small"
+            @keyup.enter.native="handleTagInputConfirm"
+            @blur="handleTagInputConfirm"
+          />
+          <el-button v-else class="button-new-tag" size="small" @click="showTagInput">+ 新标签</el-button>
+        </el-form-item>
+
         <el-form-item prop="content" style="margin-bottom: 30px;">
           <Tinymce ref="editor" v-model="postForm.body" :height="400" />
         </el-form-item>
@@ -75,7 +97,7 @@ const defaultForm = {
   img: '', // 文章图片
   create_at: undefined, // 前台展示时间
   id: undefined,
-  platforms: ['a-platform'],
+  tags: [],
   author: '',
   view: ''
 }
@@ -126,7 +148,9 @@ export default {
         body: [{ validator: validateRequire }],
         img: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
-      tempRoute: {}
+      tempRoute: {},
+      inputVisible: false, // 是否可编辑标签
+      inputValue: '' // 新输入标签值
     }
   },
   computed: {
@@ -228,6 +252,26 @@ export default {
           duration: 2000
         })
       })
+    },
+    // 取消标签输入
+    handleTagClose(tag) {
+      this.postForm.tags.splice(this.postForm.tags.indexOf(tag), 1)
+    },
+    // 显示标签编辑框
+    showTagInput() {
+      this.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+    // 添加最新输入的标签
+    handleTagInputConfirm() {
+      const inputValue = this.inputValue
+      if (inputValue) {
+        this.postForm.tags.push(inputValue)
+      }
+      this.inputVisible = false
+      this.inputValue = ''
     }
   }
 }

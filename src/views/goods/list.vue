@@ -101,14 +101,14 @@
               编辑
             </el-button>
           </router-link>
-          <el-button v-if="row.status !== 1" size="mini" type="success" @click="handleModifyStatus(row,1)">
+          <el-button v-if="row.status !== 1" size="mini" type="success" style="margin-left: 10px;" @click="handleModifyStatus(row,1)">
             上架
           </el-button>
-          <el-button v-if="row.status !== 0" size="mini" @click="handleModifyStatus(row,0)">
+          <el-button v-if="row.status !== 0" size="mini" style="margin-left: 10px;" @click="handleModifyStatus(row,0)">
             下架
           </el-button>
-          <el-button v-if="row.status !== -1" size="mini" type="danger" @click="handleExport(row)">
-            导出
+          <el-button size="mini" type="primary" @click="handleExport(row)">
+            预览
           </el-button>
         </template>
       </el-table-column>
@@ -150,7 +150,7 @@ import { fetchList } from '@/api/goods'
 import { fetchList as fetchClassList } from '@/api/classify'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Pagination from '@/components/Pagination'
 
 export default {
   name: 'ComplexTable',
@@ -278,27 +278,17 @@ export default {
       row.status = status
     },
     handleExport(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['id', 'create_at', 'title', 'content', 'excerpt', 'size', 'material', 'pack', 'qty', 'timer', 'cover_img', 'img_list', 'tags', 'categories', 'is_home_list']
-        const filterVal = ['id', 'create_at', 'title', 'content', 'excerpt', 'size', 'material', 'pack', 'qty', 'timer', 'cover_img', 'img_list', 'tags', 'categories', 'is_home_list']
-        const data = [this.temp].map(v => filterVal.map(j => {
-          if (j === 'create_at') {
-            return parseTime(v[j])
-          } else {
-            return v[j]
-          }
-        }))
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
+      const openUrl = process.env.VUE_APP_WEB_URL + 'product-detail/' + row.id
+      window.open(openUrl, '_blank')
     },
     handleDownload() {
+      if (this.selectList === null) {
+        this.$message({
+          message: '请选择要导出的列',
+          type: 'warning'
+        })
+        return
+      }
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['id', 'create_at', 'title', 'content', 'excerpt', 'size', 'material', 'pack', 'qty', 'timer', 'cover_img', 'img_list', 'tags', 'categories', 'is_home_list']
@@ -352,7 +342,7 @@ export default {
       }
     },
     formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
+      return this.selectList.map(v => filterVal.map(j => {
         if (j === 'create_at') {
           return parseTime(v[j])
         } else {
