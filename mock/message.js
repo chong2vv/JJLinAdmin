@@ -15,8 +15,10 @@ for (let i = 0; i < count; i++) {
     email: 'chong2vv@gmail.com',
     phone: '15712721839',
     content: baseContent,
-    'from_type|1': ['0', '1'],
-    'status|1': ['0', '1']
+    'from_type|1': [0, 1, 2, 3, 4, 5],
+    from_id: '@increment',
+    from_title: '@title(3, 6)',
+    'status|1': [0, 1]
   }))
 }
 
@@ -25,7 +27,7 @@ module.exports = [
     url: '/vue-admin-template/message/list',
     type: 'get',
     response: config => {
-      const { title, page = 1, limit = 20, sort } = config.query
+      const { title, page = 1, count = 20, sort } = config.query
 
       let mockList = List.filter(item => {
         if (title && item.title.indexOf(title) < 0) return false
@@ -36,14 +38,12 @@ module.exports = [
         mockList = mockList.reverse()
       }
 
-      const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))
+      const pageList = mockList.filter((item, index) => index < count * page && index >= count * (page - 1))
 
       return {
         code: 200,
-        data: {
-          total: mockList.length,
-          items: pageList
-        }
+        data: pageList,
+        total_count: mockList.length
       }
     }
   },

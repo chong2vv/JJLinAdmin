@@ -31,7 +31,7 @@
 
                 <el-col :span="10">
                   <el-form-item label-width="120px" label="发表时间:" class="postInfo-container-item">
-                    <el-date-picker v-model="displayTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="Select date and time" />
+                    <el-date-picker v-model="displayTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="选择时间" />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -40,7 +40,7 @@
         </el-row>
 
         <el-form-item style="margin-bottom: 40px;" label-width="60px" label="简介:">
-          <el-input v-model="postForm.excerpt" :rows="1" type="textarea" class="article-textarea" autosize placeholder="Please enter the content" />
+          <el-input v-model="postForm.excerpt" :rows="1" type="textarea" class="article-textarea" autosize placeholder="请填写简介" />
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}words</span>
         </el-form-item>
 
@@ -233,6 +233,7 @@ export default {
       this.loading = true
       createArticle(data).then(response => {
         this.loading = false
+        this.postForm = response.data
         this.$notify({
           title: '成功',
           message: '发布商品成功',
@@ -245,6 +246,7 @@ export default {
       this.loading = true
       updateArticle(data).then(response => {
         this.loading = false
+        this.postForm = response.data
         this.$notify({
           title: '成功',
           message: '更新商品成功',
