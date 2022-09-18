@@ -22,7 +22,7 @@ module.exports = [
     url: '/vue-admin-template/classify/list',
     type: 'get',
     response: config => {
-      const { title, page=1, count=10, sort } = config.query
+      const { title, page = 1, count = 10, sort } = config.query
 
       let mockList = List.filter(item => {
         if (title && item.title.indexOf(title) < 0) return false

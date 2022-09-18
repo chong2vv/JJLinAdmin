@@ -17,7 +17,7 @@ for (let i = 0; i < count; i++) {
       id: '@increment',
       title: '分类1'
     },
-    tags:  ['CN', 'US', 'JP', 'EU'],
+    tags: ['CN', 'US', 'JP', 'EU'],
     'status|1': [0, 1],
     create_at: '@datetime',
     size: '168cm (W) x 59.5cm (D) x 109.5cm (H)\n' +
