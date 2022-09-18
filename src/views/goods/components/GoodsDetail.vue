@@ -166,6 +166,9 @@ export default {
   },
   computed: {
     contentShortLength() {
+      if (this.postForm.excerpt === null) {
+        return 0
+      }
       return this.postForm.excerpt.length
     }
   },
@@ -184,7 +187,7 @@ export default {
     fetchData(id) {
       fetchGoods(id).then(response => {
         this.postForm = response.data
-
+        console.log(response.data)
         // set tagsview title
         this.setTagsViewTitle()
 
@@ -263,12 +266,21 @@ export default {
     },
     handleUpdateGoods(data) {
       this.loading = true
+      console.log(data)
       updateGoods(data).then(response => {
         this.loading = false
         this.$notify({
           title: '成功',
           message: '更新商品成功',
           type: 'success',
+          duration: 2000
+        })
+      }).catch(error => {
+        this.loading = false
+        this.$notify({
+          title: '失败',
+          message: error.toString(),
+          type: 'error',
           duration: 2000
         })
       })

@@ -144,6 +144,9 @@ export default {
     handleExport(row) {
       const openUrl = process.env.VUE_APP_WEB_URL + 'blog-detail/' + row.id
       window.open(openUrl, '_blank')
+    },
+    handleModifyStatus(row, status) {
+
     }
   }
 }
