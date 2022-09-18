@@ -117,7 +117,7 @@
 <script>
 import Upload from '@/components/Upload/SingleImage3'
 import Sticky from '@/components/Sticky' // 粘性header组件
-import { fetchGoods, createGoods, updateGoods } from '@/api/goods'
+import { createGoods, fetchGoods, updateGoods } from '@/api/goods'
 import { fetchList } from '@/api/classify'
 
 const defaultForm = {
@@ -187,7 +187,14 @@ export default {
     fetchData(id) {
       fetchGoods(id).then(response => {
         this.postForm = response.data
-        console.log(response.data)
+        this.fileList = this.postForm.img_list.map((url) => {
+          const data = {
+            name: url,
+            url: url
+          }
+          return data
+        })
+        console.log(this.fileList)
         // set tagsview title
         this.setTagsViewTitle()
 
@@ -210,7 +217,7 @@ export default {
     submitForm() {
       if (this.fileList.length > 0) {
         this.postForm.img_list = this.fileList.map((item) => {
-          return item.response.data[0]
+          return item.url
         })
       }
       this.$refs.postForm.validate(valid => {
@@ -240,7 +247,7 @@ export default {
       }
       if (this.fileList.length > 0) {
         this.postForm.img_list = this.fileList.map((item) => {
-          return item.response.data[0]
+          return item.url
         })
       }
       this.postForm.classify_id = this.postForm.classify.id
@@ -256,6 +263,7 @@ export default {
       this.loading = true
       createGoods(data).then(response => {
         this.loading = false
+        this.$router.go(-1)
         this.$notify({
           title: '成功',
           message: '发布商品成功',
@@ -269,6 +277,7 @@ export default {
       console.log(data)
       updateGoods(data).then(response => {
         this.loading = false
+        this.$router.go(-1)
         this.$notify({
           title: '成功',
           message: '更新商品成功',
@@ -306,7 +315,12 @@ export default {
     },
     // 文件上传列表变更
     handleChange(file, fileList) {
-      this.fileList = fileList
+      this.fileList = fileList.map((item) => {
+        return {
+          name: item.name,
+          url: item.response.data[0]
+        }
+      })
     },
     // 取消标签输入
     handleTagClose(tag) {

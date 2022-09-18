@@ -133,11 +133,13 @@
 
 import { fetchList, opMessage } from '@/api/message'
 import { parseTime } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import Pagination from '@/components/Pagination'
+import waves from '@/directive/waves' // secondary package based on el-pagination
 
 export default {
   name: 'Message',
   components: { Pagination },
+  directives: { waves },
   filters: {
     statusTypeFilter(status) {
       const statusMap = {
