@@ -25,6 +25,9 @@
       <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-upload" @click="dialogUploadVisible = true">
         UploadExcel
       </el-button>
+      <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-download" @click="fileDownload">
+        下载Excel模板
+      </el-button>
     </div>
 
     <el-table
@@ -349,6 +352,20 @@ export default {
           return v[j]
         }
       }))
+    },
+    fileDownload() {
+      // 创建a标签
+      const link = document.createElement('a')
+      // 设置a标签的href（点击地址）
+      link.href = process.env.VUE_APP_BASE_API + '/vue-admin-template/goods/downloadExcelFile'
+      // 设置a标签属性
+      link.setAttribute('download', '商品模板.xlsx')
+      // 点击a标签
+
+      document.body.appendChild(link)
+      link.click()
+      // 移除a标签
+      document.body.removeChild(link)
     }
   }
 }
