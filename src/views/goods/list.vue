@@ -194,7 +194,7 @@ export default {
         status: null,
         is_home_list: null
       },
-      isHomeShowOptions: [{ label: '是', value: true }, { label: '否', value: false }],
+      isHomeShowOptions: [{ label: '是', value: 1 }, { label: '否', value: 0 }],
       statusOptions: [{ label: '已下架', value: 0 }, { label: '上架中', value: 1 }],
       showReviewer: false,
       temp: {

@@ -42,8 +42,8 @@
               <el-row>
                 <el-col :span="12">
                   <el-form-item label-width="60px" label="分类:" class="postInfo-container-item">
-                    <el-select v-model="postForm.classify" clearable class="filter-item" placeholder="选择分类">
-                      <el-option v-for="item in classListOptions" :key="item.id" :label="item.title" :value="item.id" />
+                    <el-select v-model="postForm.classify" value-key="id" clearable class="filter-item" placeholder="选择分类">
+                      <el-option v-for="item in classListOptions" :key="item.id" :label="item.title" :value="item" />
                     </el-select>
                   </el-form-item>
                   <el-form-item label-width="120px" label="首页展示:" class="postInfo-container-item">
@@ -220,6 +220,7 @@ export default {
           return item.url
         })
       }
+      console.log(this.postForm.classify)
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.postForm.status = 1
@@ -274,7 +275,6 @@ export default {
     },
     handleUpdateGoods(data) {
       this.loading = true
-      console.log(data)
       updateGoods(data).then(response => {
         this.loading = false
         this.$router.go(-1)
