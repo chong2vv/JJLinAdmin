@@ -361,7 +361,6 @@ export default {
       // 设置a标签属性
       link.setAttribute('download', '商品模板.xlsx')
       // 点击a标签
-
       document.body.appendChild(link)
       link.click()
       // 移除a标签
