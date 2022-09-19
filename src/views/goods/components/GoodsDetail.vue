@@ -314,7 +314,6 @@ export default {
     },
     // 文件上传列表删除
     handleRemove(file, fileList) {
-      // console.log(file, fileList)
       this.fileList.some((item, i) => {
         if (item.name === file.name) {
           this.fileList.splice(i, 1)
