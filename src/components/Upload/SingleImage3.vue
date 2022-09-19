@@ -61,6 +61,7 @@ export default {
     },
     handleImageSuccess(res, file) {
       if (res.data[0]) {
+        console.log(res)
         this.emitInput(res.data[0])
       }
     }

@@ -51,6 +51,8 @@
                       v-model="postForm.is_home_list"
                       active-color="#13ce66"
                       inactive-color="#ff4949"
+                      active-value="1"
+                      inactive-value="0"
                     />
                   </el-form-item>
                 </el-col>
@@ -81,7 +83,7 @@
           <el-button v-else class="button-new-tag" size="small" @click="showTagInput">+ 新标签</el-button>
         </el-form-item>
 
-        <el-form-item label="简介:">
+        <el-form-item label="子标题:">
           <el-input v-model="postForm.excerpt" type="textarea" :autosize="{ minRows: 3, maxRows: 6}" placeholder="编辑内容" />
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}words</span>
         </el-form-item>
@@ -100,7 +102,7 @@
             :action="GLOBAL.base_upload_url"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
-            :on-change="handleChange"
+            :on-success="handleImageSuccess"
             multiple
             :limit="6"
             :on-exceed="handleExceed"
@@ -262,6 +264,7 @@ export default {
     },
     handleCreateGoods(data) {
       this.loading = true
+      console.log(data)
       createGoods(data).then(response => {
         this.loading = false
         this.$router.go(-1)
@@ -269,6 +272,14 @@ export default {
           title: '成功',
           message: '发布商品成功',
           type: 'success',
+          duration: 2000
+        })
+      }).catch(error => {
+        this.loading = false
+        this.$notify({
+          title: '失败',
+          message: error.toString(),
+          type: 'error',
           duration: 2000
         })
       })
@@ -303,7 +314,22 @@ export default {
     },
     // 文件上传列表删除
     handleRemove(file, fileList) {
-      console.log(file, fileList)
+      // console.log(file, fileList)
+      this.fileList.some((item, i) => {
+        if (item.name === file.name) {
+          this.fileList.splice(i, 1)
+          return true
+        }
+      })
+    },
+    handleImageSuccess(res, file) {
+      if (res.data[0]) {
+        const data = {
+          name: res.data[0],
+          url: res.data[0]
+        }
+        this.fileList.push(data)
+      }
     },
     // 文件上传列表预览
     handlePreview(file) {
@@ -311,16 +337,7 @@ export default {
     },
     // 文件上传数量超出
     handleExceed(files, fileList) {
-      this.$message.warning(`当前限制选择 8 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
-    },
-    // 文件上传列表变更
-    handleChange(file, fileList) {
-      this.fileList = fileList.map((item) => {
-        return {
-          name: item.name,
-          url: item.response.data[0]
-        }
-      })
+      this.$message.warning(`当前限制选择 6 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
     },
     // 取消标签输入
     handleTagClose(tag) {
