@@ -19,7 +19,7 @@
           Add
         </el-button>
       </router-link>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-download" @click="handleDownload">
+      <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-download" @click="handleGoodsExport">
         Export
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-upload" @click="dialogUploadVisible = true">
@@ -154,6 +154,7 @@ import { fetchList as fetchClassList } from '@/api/classify'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination'
+import axios from 'axios'
 
 export default {
   name: 'ComplexTable',
@@ -283,6 +284,29 @@ export default {
     handleExport(row) {
       const openUrl = process.env.VUE_APP_WEB_URL + 'product-detail/' + row.id
       window.open(openUrl, '_blank')
+    },
+    handleGoodsExport() {
+      const data = {
+        goods: this.selectList
+      }
+      axios.post(process.env.VUE_APP_BASE_API + '/vue-admin-template/goods/exportGoodsExcelFile', data, { responseType: 'arraybuffer' }).then((_res) => {
+        console.log(_res.data)
+        const blob = new Blob([_res.data], { type: 'application/vnd.ms-excel;' })
+        console.log('================================================')
+        console.log(blob)
+        const a = document.createElement('a')
+        // 生成文件路径
+        const href = window.URL.createObjectURL(blob)
+        a.href = href
+        const _fileName = 'ss-excel'
+        // 文件名中有中文 则对文件名进行转码
+        a.download = decodeURIComponent(_fileName)
+        // 利用a标签做下载
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        window.URL.revokeObjectURL(href)
+      })
     },
     handleDownload() {
       if (this.selectList === null) {

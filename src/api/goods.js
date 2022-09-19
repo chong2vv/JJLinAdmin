@@ -42,8 +42,9 @@ export function opGoods(data) {
 
 export function downLoadGoodsExcel(data) {
   return request({
-    url: '/vue-admin-template/goods/downloadExcelFile',
+    url: '/vue-admin-template/goods/exportGoodsExcelFile',
     method: 'post',
     data
   })
 }
+
