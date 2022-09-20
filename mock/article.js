@@ -14,7 +14,7 @@ for (let i = 0; i < count; i++) {
     img: image_uri,
     title: '@title(5, 10)',
     excerpt: 'mock data',
-    body: baseContent,
+    content: baseContent,
     categories: {
       id: '@increment',
       title: '分类1'

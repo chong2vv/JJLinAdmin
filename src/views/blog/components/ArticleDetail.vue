@@ -28,12 +28,6 @@
                     <el-input v-model="postForm.author" />
                   </el-form-item>
                 </el-col>
-
-                <el-col :span="10">
-                  <el-form-item label-width="120px" label="发表时间:" class="postInfo-container-item">
-                    <el-date-picker v-model="displayTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="选择时间" />
-                  </el-form-item>
-                </el-col>
               </el-row>
             </div>
           </el-col>
@@ -67,7 +61,7 @@
         </el-form-item>
 
         <el-form-item prop="content" style="margin-bottom: 30px;">
-          <Tinymce ref="editor" v-model="postForm.body" :height="400" />
+          <Tinymce ref="editor" v-model="postForm.content" :height="400" />
         </el-form-item>
 
         <el-form-item prop="img" label="封面图" style="margin-bottom: 30px;">
@@ -91,11 +85,12 @@ import Upload from '@/components/Upload/SingleImage3'
 const defaultForm = {
   status: 'draft',
   title: '', // 文章题目
-  body: '', // 文章内容
+  content: '', // 文章内容
   excerpt: '', // 文章摘要
   source_uri: '', // 文章外链
   img: '', // 文章图片
-  create_at: undefined, // 前台展示时间
+  create_at: '', // 前台展示时间
+  timestamp: undefined,
   id: undefined,
   tags: [],
   author: '',
@@ -145,7 +140,7 @@ export default {
       rules: {
         excerpt: [{ validator: validateRequire }],
         title: [{ validator: validateRequire }],
-        body: [{ validator: validateRequire }],
+        content: [{ validator: validateRequire }],
         img: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
       tempRoute: {},
@@ -155,14 +150,18 @@ export default {
   },
   computed: {
     contentShortLength() {
-      return this.postForm.excerpt.length
+      if (this.postForm.excerpt) {
+        this.postForm.excerpt.length
+      }
+      return 0
     },
     displayTime: {
       get() {
-        return (+new Date(this.postForm.create_at))
+        console.log(new Date(this.postForm.timestamp))
+        return (+new Date(this.postForm.timestamp))
       },
       set(val) {
-        this.postForm.create_at = new Date(val)
+        this.postForm.timestamp = new Date(val).getTime()
       }
     }
   },
@@ -214,7 +213,7 @@ export default {
       })
     },
     draftForm() {
-      if (this.postForm.body.length === 0 || this.postForm.title.length === 0) {
+      if (this.postForm.content.length === 0 || this.postForm.title.length === 0) {
         this.$message({
           message: '请填写必要的标题和内容',
           type: 'warning'
@@ -246,7 +245,6 @@ export default {
       this.loading = true
       updateArticle(data).then(response => {
         this.loading = false
-        this.postForm = response.data
         this.$notify({
           title: '成功',
           message: '更新商品成功',

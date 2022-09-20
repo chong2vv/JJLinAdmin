@@ -149,12 +149,11 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/goods'
+import { downLoadGoodsExcel, fetchList } from '@/api/goods'
 import { fetchList as fetchClassList } from '@/api/classify'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination'
-import axios from 'axios'
 
 export default {
   name: 'ComplexTable',
@@ -289,16 +288,13 @@ export default {
       const data = {
         goods: this.selectList
       }
-      axios.post(process.env.VUE_APP_BASE_API + '/vue-admin-template/goods/exportGoodsExcelFile', data, { responseType: 'arraybuffer' }).then((_res) => {
-        console.log(_res.data)
-        const blob = new Blob([_res.data], { type: 'application/vnd.ms-excel;' })
-        console.log('================================================')
-        console.log(blob)
+      downLoadGoodsExcel(data).then(response => {
+        console.log(response)
         const a = document.createElement('a')
         // 生成文件路径
-        const href = window.URL.createObjectURL(blob)
+        const href = ''
         a.href = href
-        const _fileName = 'ss-excel'
+        const _fileName = 'ProductExcel'
         // 文件名中有中文 则对文件名进行转码
         a.download = decodeURIComponent(_fileName)
         // 利用a标签做下载
