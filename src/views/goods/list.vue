@@ -290,18 +290,18 @@ export default {
       }
       downLoadGoodsExcel(data).then(response => {
         console.log(response)
-        const a = document.createElement('a')
-        // 生成文件路径
-        const href = ''
-        a.href = href
-        const _fileName = 'ProductExcel'
-        // 文件名中有中文 则对文件名进行转码
-        a.download = decodeURIComponent(_fileName)
-        // 利用a标签做下载
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-        window.URL.revokeObjectURL(href)
+        // 创建a标签
+        const link = document.createElement('a')
+        // 设置a标签的href（点击地址）
+        link.href = response.data
+        console.log(response)
+        // 设置a标签属性
+        link.setAttribute('download', '商品模板.xlsx')
+        // 点击a标签
+        document.body.appendChild(link)
+        link.click()
+        // 移除a标签
+        document.body.removeChild(link)
       })
     },
     handleDownload() {
