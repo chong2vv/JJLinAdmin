@@ -32,7 +32,9 @@ Vue.prototype.GLOBAL = global_ // 挂载到Vue实例上面
  * Currently MockJs will be used in the production environment,
  * please remove it before going online ! ! !
  */
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'staging') {
+  console.log('============================================================')
+  console.log('MockJs will be used in the staging environment')
   const { mockXHR } = require('../mock')
   mockXHR()
 }
