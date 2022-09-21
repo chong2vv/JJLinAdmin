@@ -12,18 +12,18 @@
         <el-option v-for="item in isHomeShowOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
+        搜索
       </el-button>
       <router-link :to="'/goods/create'">
         <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit">
-          Add
+          新增商品
         </el-button>
       </router-link>
       <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-download" @click="handleGoodsExport">
-        Export
+        导出指定商品
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-upload" @click="dialogUploadVisible = true">
-        UploadExcel
+        批量上传商品
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-download" @click="fileDownload">
         下载Excel模板
@@ -289,19 +289,20 @@ export default {
         goods: this.selectList
       }
       downLoadGoodsExcel(data).then(response => {
-        console.log(response)
         // 创建a标签
         const link = document.createElement('a')
         // 设置a标签的href（点击地址）
-        link.href = response.data
-        console.log(response)
-        // 设置a标签属性
-        link.setAttribute('download', '商品模板.xlsx')
-        // 点击a标签
+        const href = process.env.VUE_APP_BASE_API + '/vue-admin-template/goods/exportExcelFile?fileName=' + response.data
+        console.log(href)
+        link.href = href
+        const _fileName = 'ProductExcel'
+        // 文件名中有中文 则对文件名进行转码
+        link.download = decodeURIComponent(_fileName)
+        // 利用a标签做下载
         document.body.appendChild(link)
         link.click()
-        // 移除a标签
         document.body.removeChild(link)
+        window.URL.revokeObjectURL(href)
       })
     },
     handleDownload() {
