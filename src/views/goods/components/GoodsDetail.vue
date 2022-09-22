@@ -96,6 +96,22 @@
           <Upload v-model="postForm.cover_img" />
         </el-form-item>
 
+        <el-form-item
+          v-for="(video, index) in postForm.video_list"
+          :key="index"
+          :label="'链接' + `${index + 1}`"
+          :rules="{required: true, message: '链接不能为空', trigger: 'blur'}"
+        >
+          <el-input v-model="postForm.video_list[index]" />
+          <el-button @click.prevent="removeVideo(video)">
+            删除
+          </el-button>
+        </el-form-item>
+
+        <el-form-item>
+          <el-button @click="addVideo">新增视频外链</el-button>
+        </el-form-item>
+
         <el-form-item prop="img_list" label="图片/视频" style="margin-bottom: 30px;">
           <el-upload
             class="upload-demo"
@@ -135,6 +151,7 @@ const defaultForm = {
   timer: '', // 准备时长
   cover_img: '', // 封面图
   img_list: [], // 图片数组
+  video_list: [], // ytb链接数组
   tags: [], // 标签数组
   classify_id: undefined,
   classify: {
@@ -357,6 +374,16 @@ export default {
       }
       this.inputVisible = false
       this.inputValue = ''
+    },
+    removeVideo(video) {
+      const index = this.postForm.video_list.indexOf(video)
+      if (index !== -1) {
+        this.postForm.video_list.splice(index, 1)
+      }
+    },
+    // 添加视频
+    addVideo() {
+      this.postForm.video_list.push('')
     }
   }
 }
