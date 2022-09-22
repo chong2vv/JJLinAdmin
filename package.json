@@ -1,7 +1,7 @@
 {
   "name": "ry_time_admin",
   "version": "4.4.0",
-  "description": "A vue admin template with Element UI & axios & iconfont & permission control & lint",
+  "description": "House In Admin",
   "author": "wyd<chong2vv@gmail.com>",
   "scripts": {
     "dev": "vue-cli-service serve",
@@ -87,7 +87,7 @@
     "admin",
     "dashboard",
     "element-ui",
-    "boilerplate",
+    "HouseIn",
     "admin-template",
     "management-system"
   ],
