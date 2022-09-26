@@ -92,8 +92,20 @@
           <el-input v-model="postForm.content" type="textarea" :autosize="{ minRows: 8, maxRows: 12}" placeholder="编辑内容" />
         </el-form-item>
 
-        <el-form-item prop="image_uri" label="封面图" style="margin-bottom: 30px;">
+        <el-form-item prop="image_uri" label="商品封面图" style="margin-bottom: 30px;">
           <Upload v-model="postForm.cover_img" />
+        </el-form-item>
+
+        <el-form-item prop="content" label="轮播视频链接" style="margin-bottom: 30px;">
+          <el-input v-model="postForm.video_url" />
+        </el-form-item>
+
+        <el-form-item prop="image_uri" label="轮播视频封面" style="margin-bottom: 30px;">
+          <Upload v-model="postForm.video_img" />
+        </el-form-item>
+
+        <el-form-item prop="content" style="margin-bottom: 30px;">
+          <Tinymce ref="editor" v-model="postForm.goods_body" :height="400" />
         </el-form-item>
 
         <el-form-item
@@ -135,6 +147,7 @@
 <script>
 import Upload from '@/components/Upload/SingleImage3'
 import Sticky from '@/components/Sticky' // 粘性header组件
+import Tinymce from '@/components/Tinymce'
 import { createGoods, fetchGoods, updateGoods } from '@/api/goods'
 import { fetchList } from '@/api/classify'
 
@@ -145,6 +158,9 @@ const defaultForm = {
   content: '', // 商品描述
   excerpt: '', // 短描述
   size: '', // 尺寸
+  goods_body: '',
+  video_url: '',
+  video_img: '',
   material: '', // 材料
   pack: '', // 打包方式
   qty: '', // 装箱量
@@ -164,7 +180,7 @@ const defaultForm = {
 
 export default {
   name: 'GoodsDetail',
-  components: { Upload, Sticky },
+  components: { Upload, Sticky, Tinymce },
   props: {
     isEdit: {
       type: Boolean,
