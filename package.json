@@ -5,6 +5,7 @@
   "author": "wyd<chong2vv@gmail.com>",
   "scripts": {
     "dev": "vue-cli-service serve",
+    "qa": "vue-cli-service serve --mode qa",
     "prod": "vue-cli-service serve --mode production",
     "mock": "vue-cli-service serve --mode staging",
     "build:prod": "vue-cli-service build",
