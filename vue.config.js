@@ -27,7 +27,7 @@ module.exports = {
   publicPath: '/',
   outputDir: 'dist',
   assetsDir: 'static',
-  lintOnSave: process.env.NODE_ENV !== 'production',
+  lintOnSave: process.env.NODE_ENV !== 'production' || process.env.NODE_ENV !== 'qa',
   productionSourceMap: false,
   devServer: {
     host: '0.0.0.0',
@@ -82,7 +82,7 @@ module.exports = {
       .end()
 
     config
-      .when(process.env.NODE_ENV === 'production',
+      .when(process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'qa',
         config => {
           config
             .plugin('ScriptExtHtmlWebpackPlugin')
