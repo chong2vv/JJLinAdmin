@@ -72,7 +72,7 @@
       </el-table-column>
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status!='1'" size="mini" @click="handleModifyStatus(scope.row,'1')">
+          <el-button v-if="scope.row.status !== 1" size="mini" @click="handleModifyStatus(scope.row,1)">
             已处理
           </el-button>
           <el-button size="mini" type="success" @click="viewDetail(scope.row)">
@@ -117,7 +117,7 @@
       </template>
 
       <div slot="footer" class="dialog-footer">
-        <el-button type="success" @click="handleModifyStatusAndClose">
+        <el-button v-if="temp.status !== 1" type="success" @click="handleModifyStatusAndClose">
           已处理
         </el-button>
         <el-button type="info" @click="dialogFormVisible = false">
@@ -131,7 +131,7 @@
 
 <script>
 
-import { fetchList, opMessage } from '@/api/message'
+import { fetchList, updateMessage } from '@/api/message'
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves' // secondary package based on el-pagination
@@ -237,7 +237,7 @@ export default {
       this.temp = Object.assign({}, row) // copy obj
       this.temp.status = status
       const self = this
-      opMessage(this.temp).then(response => {
+      updateMessage(this.temp).then(response => {
         this.$message({
           message: '操作Success',
           type: 'success'
@@ -248,9 +248,9 @@ export default {
     },
     handleModifyStatusAndClose() {
       this.dialogFormVisible = false
-      this.temp.status = '1'
+      this.temp.status = 1
       const self = this
-      opMessage(this.temp).then(response => {
+      updateMessage(this.temp).then(response => {
         const index = self.list.findIndex(v => v.id === this.temp.id)
         self.list.splice(index, 1, this.temp)
         self.resetTemp()
