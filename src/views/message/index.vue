@@ -78,6 +78,9 @@
           <el-button size="mini" type="success" @click="viewDetail(scope.row)">
             详情
           </el-button>
+          <el-button size="mini" type="success" @click="sendMessage(scope.row)">
+            发消息
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -193,6 +196,10 @@ export default {
         from_title: '',
         status: 0
       },
+      sendMessageTemp: {
+        email: '',
+        content: ''
+      },
       statusOptions: [{ label: '已处理', value: 0 }, { label: '未处理', value: 1 }],
       dialogFormVisible: false,
       dialogStatus: '详情'
@@ -264,6 +271,14 @@ export default {
     viewDetail(row) {
       this.temp = Object.assign({}, row) // copy obj
       this.dialogFormVisible = true
+    },
+    sendMessage(row) {
+      this.temp = Object.assign({}, row) // copy obj
+      this.sendMessageTemp.email = this.temp.email
+      this.$message({
+        message: '功能暂未开放',
+        type: 'error'
+      })
     }
   }
 }
