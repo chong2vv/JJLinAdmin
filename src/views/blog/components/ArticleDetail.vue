@@ -65,11 +65,23 @@
         </el-form-item>
 
         <el-form-item prop="img" label="封面图" style="margin-bottom: 30px;">
+          <el-button size="small" type="primary" @click="dialogCoverVisible = true; dialogStatus = 1">链接添加</el-button>
           <Upload v-model="postForm.img" />
         </el-form-item>
-
       </div>
     </el-form>
+
+    <el-dialog title="输入图片链接添加" :visible.sync="dialogCoverVisible">
+      <el-input v-model="inputUrl" />
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogCoverVisible = false">
+          Cancel
+        </el-button>
+        <el-button type="primary" @click="changeCoverImage">
+          Confirm
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -144,6 +156,9 @@ export default {
         img: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
       tempRoute: {},
+      dialogCoverVisible: false,
+      inputUrl: '',
+      dialogStatus: undefined,
       inputVisible: false, // 是否可编辑标签
       inputValue: '' // 新输入标签值
     }
@@ -272,6 +287,13 @@ export default {
       }
       this.inputVisible = false
       this.inputValue = ''
+    },
+    // 链接添加
+    changeCoverImage() {
+      this.postForm.img = this.inputUrl
+      this.inputUrl = ''
+      this.dialogCoverVisible = false
+      this.dialogStatus = undefined
     }
   }
 }
