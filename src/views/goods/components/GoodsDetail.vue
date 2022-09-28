@@ -93,6 +93,7 @@
         </el-form-item>
 
         <el-form-item prop="image_uri" label="商品封面图" style="margin-bottom: 30px;">
+          <el-button size="small" type="primary" @click="dialogCoverVisible = true; dialogStatus = 1">链接添加</el-button>
           <Upload v-model="postForm.cover_img" />
         </el-form-item>
 
@@ -101,6 +102,7 @@
         </el-form-item>
 
         <el-form-item prop="image_uri" label="轮播视频封面" style="margin-bottom: 30px;">
+          <el-button size="small" type="primary" @click="dialogCoverVisible = true; dialogStatus = 2">链接添加</el-button>
           <Upload v-model="postForm.video_img" />
         </el-form-item>
 
@@ -125,6 +127,7 @@
         </el-form-item>
 
         <el-form-item prop="img_list" label="图片/视频" style="margin-bottom: 30px;">
+          <el-button size="small" type="primary" @click="dialogCoverVisible = true; dialogStatus = 3">通过链接添加</el-button>
           <el-upload
             class="upload-demo"
             :action="GLOBAL.base_upload_url"
@@ -141,6 +144,24 @@
         </el-form-item>
       </div>
     </el-form>
+
+    <el-image-viewer
+      v-if="imageShow"
+      :on-close="()=>{imageShow = false}"
+      :url-list="[imageShowUrl]"
+    />
+
+    <el-dialog title="输入图片链接添加" :visible.sync="dialogCoverVisible">
+      <el-input v-model="inputUrl" />
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogCoverVisible = false">
+          Cancel
+        </el-button>
+        <el-button type="primary" @click="changeCoverImage">
+          Confirm
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -180,7 +201,7 @@ const defaultForm = {
 
 export default {
   name: 'GoodsDetail',
-  components: { Upload, Sticky, Tinymce },
+  components: { Upload, Sticky, Tinymce, 'el-image-viewer': () => import('element-ui/packages/image/src/image-viewer') },
   props: {
     isEdit: {
       type: Boolean,
@@ -195,8 +216,13 @@ export default {
       tempRoute: {},
       fileList: [],
       value1: [],
+      imageShow: false,
+      imageShowUrl: '',
       inputVisible: false, // 是否可编辑标签
-      inputValue: '' // 新输入标签值
+      inputValue: '', // 新输入标签值
+      dialogCoverVisible: false,
+      dialogStatus: undefined,
+      inputUrl: ''
     }
   },
   computed: {
@@ -365,7 +391,8 @@ export default {
     },
     // 文件上传列表预览
     handlePreview(file) {
-      console.log(file)
+      this.imageShow = true
+      this.imageShowUrl = file.url
     },
     // 文件上传数量超出
     handleExceed(files, fileList) {
@@ -400,6 +427,22 @@ export default {
     // 添加视频
     addVideo() {
       this.postForm.video_list.push('')
+    },
+    // 链接添加
+    changeCoverImage() {
+      if (this.dialogStatus === 1) {
+        this.postForm.cover_img = this.inputUrl
+      } else if (this.dialogStatus === 2) {
+        this.postForm.video_img = this.inputUrl
+      } else if (this.dialogStatus === 3) {
+        this.fileList.push({
+          name: this.inputUrl,
+          url: this.inputUrl
+        })
+      }
+      this.inputUrl = ''
+      this.dialogCoverVisible = false
+      this.dialogStatus = undefined
     }
   }
 }
