@@ -54,6 +54,11 @@
           <el-tag :type="scope.row.status | statusTypeFilter">{{ scope.row.status | statusFilter }}</el-tag>
         </template>
       </el-table-column>
+      <el-table-column class-name="status-col" label="站点" width="100" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.website | fromWebsiteFilter }}</span>
+        </template>
+      </el-table-column>
       <el-table-column class-name="status-col" label="来源" width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.from_type | fromTypeFilter }}</span>
@@ -169,6 +174,14 @@ export default {
         5: '页脚'
       }
       return statusMap[status]
+    },
+    // 来源站点
+    fromWebsiteFilter(type) {
+      const typeMap = {
+        0: '主站',
+        1: '副站1'
+      }
+      return typeMap[type]
     }
   },
   data() {
@@ -191,6 +204,7 @@ export default {
         content: '',
         email: '',
         phone: '',
+        website: 0,
         from_type: undefined,
         from_id: undefined,
         from_title: '',

@@ -16,6 +16,7 @@ for (let i = 0; i < count; i++) {
     phone: '15712721839',
     content: baseContent,
     'from_type|1': [0, 1, 2, 3, 4, 5],
+    'website|1': [0, 1],
     from_id: '@increment',
     from_title: '@title(3, 6)',
     'status|1': [0, 1]
