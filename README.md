@@ -1,6 +1,6 @@
-# ry_time_admin_app_vue
+# YD KUMA ADMIN
 
-> House In Admin
+> Kuma Admin
 
 **The current version is `v4.0+` build on `vue-cli`.**
 

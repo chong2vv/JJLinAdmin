@@ -94,34 +94,34 @@ export const constantRoutes = [
     ]
   },
 
-  {
-    path: '/goods',
-    component: Layout,
-    name: 'Goods',
-    redirect: '/goods/goods',
-    meta: { title: '商品', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'goods',
-        name: 'goods',
-        component: () => import('@/views/goods/list'),
-        meta: { title: '商品列表', icon: 'shopping' }
-      },
-      {
-        path: 'create',
-        name: 'create',
-        component: () => import('@/views/goods/create'),
-        meta: { title: '创建商品', icon: 'tree' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/goods/edit'),
-        name: 'edit',
-        meta: { title: '编辑商品', noCache: true, activeMenu: '/goods/goods' },
-        hidden: true
-      }
-    ]
-  },
+  // {
+  //   path: '/goods',
+  //   component: Layout,
+  //   name: 'Goods',
+  //   redirect: '/goods/goods',
+  //   meta: { title: '商品', icon: 'el-icon-s-help' },
+  //   children: [
+  //     {
+  //       path: 'goods',
+  //       name: 'goods',
+  //       component: () => import('@/views/goods/list'),
+  //       meta: { title: '商品列表', icon: 'shopping' }
+  //     },
+  //     {
+  //       path: 'create',
+  //       name: 'create',
+  //       component: () => import('@/views/goods/create'),
+  //       meta: { title: '创建商品', icon: 'tree' }
+  //     },
+  //     {
+  //       path: 'edit/:id(\\d+)',
+  //       component: () => import('@/views/goods/edit'),
+  //       name: 'edit',
+  //       meta: { title: '编辑商品', noCache: true, activeMenu: '/goods/goods' },
+  //       hidden: true
+  //     }
+  //   ]
+  // },
 
   {
     path: '/blog',
@@ -152,16 +152,16 @@ export const constantRoutes = [
     ]
   },
 
-  {
-    path: 'external-link',
-    component: Layout,
-    children: [
-      {
-        path: 'http://8.142.125.160:9528/',
-        meta: { title: 'HouseIn官网', icon: 'link' }
-      }
-    ]
-  },
+  // {
+  //   path: 'external-link',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'http://8.142.125.160:9528/',
+  //       meta: { title: 'HouseIn官网', icon: 'link' }
+  //     }
+  //   ]
+  // },
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

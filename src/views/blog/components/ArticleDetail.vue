@@ -68,6 +68,38 @@
           <el-button size="small" type="primary" @click="dialogCoverVisible = true; dialogStatus = 1">链接添加</el-button>
           <Upload v-model="postForm.img" />
         </el-form-item>
+
+        <el-form-item
+          v-for="(video, index) in postForm.video_list"
+          :key="index"
+          :label="'链接' + `${index + 1}`"
+          :rules="{required: true, message: '链接不能为空', trigger: 'blur'}"
+        >
+          <el-input v-model="postForm.video_list[index]" />
+          <el-button @click.prevent="removeVideo(video)">
+            删除
+          </el-button>
+        </el-form-item>
+
+        <el-form-item>
+          <el-button @click="addVideo">新增视频外链</el-button>
+        </el-form-item>
+        <el-form-item prop="img_list" label="图片/视频" style="margin-bottom: 30px;">
+          <el-button size="small" type="primary" @click="dialogCoverVisible = true; dialogStatus = 3">通过链接添加</el-button>
+          <el-upload
+            class="upload-demo"
+            :action="GLOBAL.base_upload_url"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :on-success="handleImageSuccess"
+            multiple
+            :limit="6"
+            :on-exceed="handleExceed"
+            :file-list="fileList"
+          >
+            <el-button size="small" type="primary">点击上传</el-button>
+          </el-upload>
+        </el-form-item>
       </div>
     </el-form>
 
@@ -93,6 +125,7 @@ import { validURL } from '@/utils/validate'
 import { fetchArticle, createArticle, updateArticle } from '@/api/article'
 import { SourceUrlDropdown } from './Dropdown'
 import Upload from '@/components/Upload/SingleImage3'
+import { fetchList } from '@/api/classify'
 
 const defaultForm = {
   status: 'draft',
@@ -104,7 +137,15 @@ const defaultForm = {
   create_at: '', // 前台展示时间
   timestamp: undefined,
   id: undefined,
-  tags: [],
+  img_list: [], // 图片数组
+  video_list: [], // ytb链接数组
+  tags: [], // 标签数组
+  classify_id: undefined,
+  classify: {
+    id: undefined,
+    title: '',
+    image_url: ''
+  }, // 分类
   author: '',
   view: ''
 }
@@ -156,6 +197,8 @@ export default {
         img: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
       tempRoute: {},
+      classListOptions: [],
+      fileList: [],
       dialogCoverVisible: false,
       inputUrl: '',
       dialogStatus: undefined,
@@ -215,6 +258,12 @@ export default {
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.postForm.status = 1
+          if (this.fileList.length > 0) {
+            this.postForm.img_list = this.fileList.map((item) => {
+              return item.url
+            })
+          }
+          this.postForm.classify_id = this.postForm.classify.id
           const data = this.postForm
           if (this.isEdit) {
             this.handleUpdateArticle(data)
@@ -268,6 +317,40 @@ export default {
         })
       })
     },
+    // 获取分类列表
+    getRemoteClassList() {
+      fetchList().then(response => {
+        if (!response.data) return
+        this.classListOptions = response.data
+      })
+    },
+    // 文件上传列表删除
+    handleRemove(file, fileList) {
+      this.fileList.some((item, i) => {
+        if (item.name === file.name) {
+          this.fileList.splice(i, 1)
+          return true
+        }
+      })
+    },
+    handleImageSuccess(res, file) {
+      if (res.data[0]) {
+        const data = {
+          name: res.data[0],
+          url: res.data[0]
+        }
+        this.fileList.push(data)
+      }
+    },
+    // 文件上传列表预览
+    handlePreview(file) {
+      this.imageShow = true
+      this.imageShowUrl = file.url
+    },
+    // 文件上传数量超出
+    handleExceed(files, fileList) {
+      this.$message.warning(`当前限制选择 6 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
+    },
     // 取消标签输入
     handleTagClose(tag) {
       this.postForm.tags.splice(this.postForm.tags.indexOf(tag), 1)
@@ -287,6 +370,16 @@ export default {
       }
       this.inputVisible = false
       this.inputValue = ''
+    },
+    removeVideo(video) {
+      const index = this.postForm.video_list.indexOf(video)
+      if (index !== -1) {
+        this.postForm.video_list.splice(index, 1)
+      }
+    },
+    // 添加视频
+    addVideo() {
+      this.postForm.video_list.push('')
     },
     // 链接添加
     changeCoverImage() {
