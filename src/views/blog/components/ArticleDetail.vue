@@ -33,6 +33,18 @@
           </el-col>
         </el-row>
 
+        <div class="postInfo-container">
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label-width="60px" label="分类:" class="postInfo-container-item">
+                <el-select v-model="postForm.classify" value-key="id" clearable class="filter-item" placeholder="选择分类">
+                  <el-option v-for="item in classListOptions" :key="item.id" :label="item.title" :value="item" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+
         <el-form-item style="margin-bottom: 40px;" label-width="60px" label="简介:">
           <el-input v-model="postForm.excerpt" :rows="1" type="textarea" class="article-textarea" autosize placeholder="请填写简介" />
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}words</span>
@@ -193,7 +205,6 @@ export default {
       rules: {
         excerpt: [{ validator: validateRequire }],
         title: [{ validator: validateRequire }],
-        content: [{ validator: validateRequire }],
         img: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
       tempRoute: {},
@@ -228,6 +239,7 @@ export default {
       const id = this.$route.params && this.$route.params.id
       this.fetchData(id)
     }
+    this.getRemoteClassList()
     // Why need to make a copy of this.$route here?
     // Because if you enter this page and quickly switch tag, may be in the execution of the setTagsViewTitle function, this.$route is no longer pointing to the current page
     // https://github.com/PanJiaChen/vue-element-admin/issues/1221
@@ -285,6 +297,12 @@ export default {
         return
       }
       this.postForm.status = 0
+      if (this.fileList.length > 0) {
+        this.postForm.img_list = this.fileList.map((item) => {
+          return item.url
+        })
+      }
+      this.postForm.classify_id = this.postForm.classify.id
       const data = this.postForm
       if (this.isEdit) {
         this.handleUpdateArticle(data)

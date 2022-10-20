@@ -69,6 +69,48 @@ export const constantRoutes = [
   },
 
   {
+    path: '/classify',
+    component: Layout,
+    children: [
+      {
+        path: 'classify',
+        name: 'classify',
+        component: () => import('@/views/classify/classify'),
+        meta: { title: '模块', icon: 'table' }
+      }
+    ]
+  },
+
+  {
+    path: '/blog',
+    component: Layout,
+    name: 'Blog',
+    redirect: '/blog/blog',
+    meta: { title: '文章', icon: 'documentation' },
+    children: [
+      {
+        path: 'list',
+        name: 'ArticleList',
+        component: () => import('@/views/blog/list'),
+        meta: { title: '文章列表', icon: 'nested' }
+      },
+      {
+        path: 'create',
+        name: 'CreateArticle',
+        component: () => import('@/views/blog/create'),
+        meta: { title: '创建文章', icon: 'tree' }
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        component: () => import('@/views/blog/edit'),
+        name: 'EditArticle',
+        meta: { title: '编辑文章', noCache: true, activeMenu: '/blog/blog' },
+        hidden: true
+      }
+    ]
+  },
+
+  {
     path: '/message',
     component: Layout,
     children: [
@@ -77,19 +119,6 @@ export const constantRoutes = [
         name: 'message',
         component: () => import('@/views/message/index'),
         meta: { title: '信息', icon: 'email' }
-      }
-    ]
-  },
-
-  {
-    path: '/classify',
-    component: Layout,
-    children: [
-      {
-        path: 'classify',
-        name: 'classify',
-        component: () => import('@/views/classify/classify'),
-        meta: { title: '分类', icon: 'table' }
       }
     ]
   },
@@ -122,35 +151,6 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
-
-  {
-    path: '/blog',
-    component: Layout,
-    name: 'Blog',
-    redirect: '/blog/blog',
-    meta: { title: '文章', icon: 'documentation' },
-    children: [
-      {
-        path: 'list',
-        name: 'ArticleList',
-        component: () => import('@/views/blog/list'),
-        meta: { title: '文章列表', icon: 'nested' }
-      },
-      {
-        path: 'create',
-        name: 'CreateArticle',
-        component: () => import('@/views/blog/create'),
-        meta: { title: '创建文章', icon: 'tree' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/blog/edit'),
-        name: 'EditArticle',
-        meta: { title: '编辑商品', noCache: true, activeMenu: '/blog/blog' },
-        hidden: true
-      }
-    ]
-  },
 
   // {
   //   path: 'external-link',

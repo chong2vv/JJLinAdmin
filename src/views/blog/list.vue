@@ -2,6 +2,9 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.search_str" placeholder="搜索" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.classify_id" placeholder="分类名" clearable class="filter-item" style="width: 130px" @change="handleFilter">
+        <el-option v-for="item in classList" :key="item.id" :label="item.title" :value="item.id" />
+      </el-select>
       <el-select v-model="listQuery.status" placeholder="状态" clearable style="width: 140px" class="filter-item" @change="handleFilter">
         <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
       </el-select>
@@ -18,9 +21,9 @@
       </el-table-column>
 
       <el-table-column min-width="120px" fixed label="标题">
-        <template slot-scope="{row}">
-          <router-link :to="'/blog/edit/'+row.id" class="link-type">
-            <span>{{ row.title }}</span>
+        <template slot-scope="scope">
+          <router-link :to="'/blog/edit/'+scope.row.id" class="link-type">
+            <span>{{ scope.row.title }}</span>
           </router-link>
         </template>
       </el-table-column>
@@ -31,9 +34,15 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="140" label="封面">
-        <template slot-scope="{row}">
-          <el-image :src="row.img" :preview-src-list="[row.img]" />
+      <el-table-column min-width="110px" align="center" label="分类">
+        <template slot-scope="scope">
+          <span v-if="scope.row.classify">{{ scope.row.classify.title }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column min-width="140" label="封面" align="center">
+        <template slot-scope="scope">
+          <el-image :src="scope.row.img" :preview-src-list="[scope.row.img]" />
         </template>
       </el-table-column>
 
@@ -50,9 +59,9 @@
       </el-table-column>
 
       <el-table-column label="状态" class-name="status-col" width="100">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status | statusLabel }}
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.status | statusFilter">
+            {{ scope.row.status | statusLabel }}
           </el-tag>
         </template>
       </el-table-column>
@@ -86,6 +95,7 @@
 
 <script>
 import { fetchList } from '@/api/article'
+import { fetchList as fetchClassList } from '@/api/classify'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves'
 
@@ -116,10 +126,12 @@ export default {
       list: null,
       total: 0,
       listLoading: true,
+      classList: null,
       statusOptions: [{ label: '已下架', value: 0 }, { label: '上架中', value: 1 }],
       listQuery: {
         page: 1,
         search_str: undefined,
+        classify_id: undefined,
         status: null,
         count: 20
       }
@@ -127,12 +139,19 @@ export default {
   },
   created() {
     this.getList()
+    this.getClassList()
   },
   methods: {
+    getClassList() {
+      fetchClassList().then(response => {
+        this.classList = response.data
+      })
+    },
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
         this.list = response.data
+        console.log(this.list)
         this.total = response.total_count
         this.listLoading = false
       })
