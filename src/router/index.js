@@ -85,7 +85,7 @@ export const constantRoutes = [
     path: '/blog',
     component: Layout,
     name: 'Blog',
-    redirect: '/blog/blog',
+    redirect: '/blog/list',
     meta: { title: '文章', icon: 'documentation' },
     children: [
       {

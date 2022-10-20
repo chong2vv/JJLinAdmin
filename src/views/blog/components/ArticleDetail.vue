@@ -103,9 +103,9 @@
             :action="GLOBAL.base_upload_url"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
+            :on-change="handleChange"
             :on-success="handleImageSuccess"
-            multiple
-            :limit="6"
+            :limit="50"
             :on-exceed="handleExceed"
             :file-list="fileList"
           >
@@ -114,6 +114,12 @@
         </el-form-item>
       </div>
     </el-form>
+
+    <el-image-viewer
+      v-if="imageShow"
+      :on-close="()=>{imageShow = false}"
+      :url-list="[imageShowUrl]"
+    />
 
     <el-dialog title="输入图片链接添加" :visible.sync="dialogCoverVisible">
       <el-input v-model="inputUrl" />
@@ -164,7 +170,7 @@ const defaultForm = {
 
 export default {
   name: 'ArticleDetail',
-  components: { Tinymce, MDinput, Sticky, SourceUrlDropdown, Upload },
+  components: { Tinymce, MDinput, Sticky, SourceUrlDropdown, Upload, 'el-image-viewer': () => import('element-ui/packages/image/src/image-viewer') },
   props: {
     isEdit: {
       type: Boolean,
@@ -209,6 +215,8 @@ export default {
       },
       tempRoute: {},
       classListOptions: [],
+      imageShow: false,
+      imageShowUrl: '',
       fileList: [],
       dialogCoverVisible: false,
       inputUrl: '',
@@ -226,7 +234,6 @@ export default {
     },
     displayTime: {
       get() {
-        console.log(new Date(this.postForm.timestamp))
         return (+new Date(this.postForm.timestamp))
       },
       set(val) {
@@ -249,6 +256,13 @@ export default {
     fetchData(id) {
       fetchArticle(id).then(response => {
         this.postForm = response.data
+        this.fileList = this.postForm.img_list.map((url) => {
+          const data = {
+            name: url,
+            url: url
+          }
+          return data
+        })
         // set tagsview title
         this.setTagsViewTitle()
         // set page title
@@ -351,7 +365,19 @@ export default {
         }
       })
     },
-    handleImageSuccess(res, file) {
+    handleChange(fileList) {
+      console.log(fileList)
+    },
+    handleImageSuccess(res, file, fileList) {
+      // if (res.data) {
+      //   res.data.map((url) => {
+      //     const item = {
+      //       name: url,
+      //       url: url
+      //     }
+      //     this.fileList.push(item)
+      //   })
+      // }
       if (res.data[0]) {
         const data = {
           name: res.data[0],

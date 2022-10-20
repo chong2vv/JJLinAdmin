@@ -82,9 +82,6 @@
             下架
           </el-button>
 
-          <el-button type="primary" size="small" style="margin-left: 10px;" @click="handleExport(scope.row)">
-            预览
-          </el-button>
         </template>
       </el-table-column>
     </el-table>
