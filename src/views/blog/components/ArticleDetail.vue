@@ -284,13 +284,14 @@ export default {
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.postForm.status = 1
-          if (this.fileList.length > 0) {
+          if (this.fileList.length >= 0) {
             this.postForm.img_list = this.fileList.map((item) => {
               return item.url
             })
           }
           this.postForm.classify_id = this.postForm.classify.id
           const data = this.postForm
+          console.log(data.img)
           if (this.isEdit) {
             this.handleUpdateArticle(data)
           } else {
@@ -311,13 +312,14 @@ export default {
         return
       }
       this.postForm.status = 0
-      if (this.fileList.length > 0) {
+      if (this.fileList.length >= 0) {
         this.postForm.img_list = this.fileList.map((item) => {
           return item.url
         })
       }
       this.postForm.classify_id = this.postForm.classify.id
       const data = this.postForm
+      console.log(data.img)
       if (this.isEdit) {
         this.handleUpdateArticle(data)
       } else {
@@ -331,7 +333,7 @@ export default {
         this.postForm = response.data
         this.$notify({
           title: '成功',
-          message: '发布商品成功',
+          message: '发布日志成功',
           type: 'success',
           duration: 2000
         })
@@ -343,7 +345,7 @@ export default {
         this.loading = false
         this.$notify({
           title: '成功',
-          message: '更新商品成功',
+          message: '更新日志成功',
           type: 'success',
           duration: 2000
         })
