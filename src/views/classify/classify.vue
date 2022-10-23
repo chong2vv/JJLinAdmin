@@ -36,6 +36,12 @@
         </template>
       </el-table-column>
 
+      <el-table-column min-width="50px" label="跳转类型">
+        <template slot-scope="{row}">
+          <span>{{ row.type | typeFilter }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column align="center" label="状态" width="200">
         <template slot-scope="{row}">
           <el-tag v-if="row.status === 1" type="success" effect="dark">使用中</el-tag>
@@ -67,15 +73,20 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Title" prop="title">
+        <el-form-item label="标题" prop="title">
           <el-input v-model="temp.title" />
         </el-form-item>
-        <el-form-item label="Status">
+        <el-form-item label="状态">
           <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
             <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Remark">
+        <el-form-item label="跳转类型">
+          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="备注">
           <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
         </el-form-item>
         <el-form-item size="medium" label="图片">
@@ -93,10 +104,10 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
-          Cancel
+          取消
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          Confirm
+          确定
         </el-button>
       </div>
     </el-dialog>
@@ -118,6 +129,13 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
+    },
+    typeFilter(type) {
+      const typeMap = {
+        0: '默认页面',
+        1: '随心记'
+      }
+      return typeMap[type]
     }
   },
   data() {
@@ -134,6 +152,7 @@ export default {
         title: '',
         status: 1,
         image_url: '',
+        type: 0,
         remark: ''
       },
       textMap: {
@@ -148,6 +167,16 @@ export default {
         {
           value: 0,
           label: '禁用'
+        }
+      ],
+      typeOptions: [
+        {
+          value: 0,
+          label: '默认页面'
+        },
+        {
+          value: 1,
+          label: '随心记'
         }
       ],
       dialogFormVisible: false,
@@ -171,6 +200,7 @@ export default {
         remark: '',
         title: '',
         image_url: '',
+        type: 0,
         status: 1
       }
     },
