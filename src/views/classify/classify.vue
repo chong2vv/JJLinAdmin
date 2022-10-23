@@ -8,11 +8,7 @@
     </div>
 
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%; margin-top:20px;">
-      <el-table-column align="center" label="ID" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
-        </template>
-      </el-table-column>
+      <el-table-column align="center" label="ID" width="80" type="index" />
 
       <el-table-column min-width="80px" label="类名">
         <template slot-scope="{row}">
