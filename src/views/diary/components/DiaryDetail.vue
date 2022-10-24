@@ -87,8 +87,9 @@
             :on-exceed="handleExceed"
             :file-list="fileList"
           >
-            <el-button size="small" type="primary">点击上传</el-button>
+            <el-button size="small" type="primary">选择文件</el-button>
           </el-upload>
+          <el-button size="small" type="success" @click="submitUpload">开始上传</el-button>
         </el-form-item>
       </div>
     </el-form>
@@ -118,8 +119,7 @@ import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { fetchDiary, createDiary, updateDiary } from '@/api/diary'
 import { fetchList } from '@/api/classify'
-import ajax from 'element-ui/packages/upload/src/ajax'
-import Global from '@/Global'
+import { upload } from '@/api/upload'
 
 const defaultForm = {
   status: 'draft',
@@ -178,6 +178,7 @@ export default {
       imageShow: false,
       imageShowUrl: '',
       fileList: [],
+      uploadFileList: [],
       dialogCoverVisible: false,
       inputUrl: '',
       dialogStatus: undefined,
@@ -315,12 +316,25 @@ export default {
     getRemoteClassList() {
       fetchList().then(response => {
         if (!response.data) return
-        this.classListOptions = response.data
+        const list = []
+        response.data.forEach(function(item) {
+          console.log(item)
+          if (item.type === 1) {
+            list.push(item)
+          }
+        })
+        this.classListOptions = list
       })
     },
     // 文件上传列表删除
     handleRemove(file, fileList) {
-      console.log('难道是你？？？？？？')
+      this.uploadFileList.some((item, i) => {
+        if (item.uid === file.uid) {
+          this.uploadFileList.splice(i, 1)
+          return true
+        }
+      })
+
       this.fileList.some((item, i) => {
         if (item.name === file.name) {
           this.fileList.splice(i, 1)
@@ -328,60 +342,36 @@ export default {
         }
       })
     },
+    submitUpload() {
+      if (this.uploadFileList.length === 0) {
+        return
+      }
+      const formData = new FormData()
+      this.uploadFileList.forEach(function(item) {
+        formData.append('file', item)
+      })
+
+      upload(formData).then(response => {
+        if (!response.data) return
+        this.uploadFileList = []
+        response.data.map((url) => {
+          const data = {
+            name: url,
+            url: url
+          }
+          this.fileList.push(data)
+        })
+      })
+    },
     // 覆盖默认的上传行为
     uploadFile(options) {
-      const { file } = options
-      if (file.type.indexOf('image/') > -1) {
-        options.action = Global.base_upload_url
-      } else {
-        options.action = Global.base_upload_url
-      }
-      // this.isUploading = true;
-      return ajax(options)
+      this.uploadFileList.push(options.file)
     },
     handleChange(fileList) {
-
+      console.log(fileList)
     },
     handleImageSuccess(res, file, fileList) {
-      const list = fileList.map((item) => {
-        if (item.response) {
-          const data = {
-            name: item.response.data[0],
-            url: item.response.data[0],
-            uid: item.uid
-          }
-          return data
-        } else if (!item.response && item.url) {
-          const data = {
-            name: item.name,
-            url: item.url,
-            uid: item.uid
-          }
-          return data
-        }
-      })
-
-      list.some((item, i) => {
-        if (item === undefined) {
-          list.splice(i, 1)
-        }
-      })
-
-      console.log('=============')
-      console.log(list)
-      console.log('-------------')
-      this.fileList = list.map((item) => {
-        if (item) {
-          const data = {
-            name: item.url,
-            url: item.url,
-            uid: item.uid
-          }
-          return data
-        } else {
-          return null
-        }
-      })
+      console.log(fileList)
     },
     // 文件上传列表预览
     handlePreview(file) {

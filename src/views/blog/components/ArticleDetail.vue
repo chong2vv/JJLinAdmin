@@ -111,31 +111,30 @@
             :on-exceed="handleExceed"
             :file-list="fileList"
           >
-            <el-button size="small" type="primary">点击上传</el-button>
+            <el-button size="small" type="primary">选择文件</el-button>
           </el-upload>
+          <el-button size="small" type="success" @click="submitUpload">开始上传</el-button>
         </el-form-item>
-      </div>
-    </el-form>
 
-    <el-image-viewer
-      v-if="imageShow"
-      :on-close="()=>{imageShow = false}"
-      :url-list="[imageShowUrl]"
-    />
+        <el-image-viewer
+          v-if="imageShow"
+          :on-close="()=>{imageShow = false}"
+          :url-list="[imageShowUrl]"
+        />
 
-    <el-dialog title="输入图片链接添加" :visible.sync="dialogCoverVisible">
-      <el-input v-model="inputUrl" />
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogCoverVisible = false">
-          Cancel
-        </el-button>
-        <el-button type="primary" @click="changeCoverImage">
-          Confirm
-        </el-button>
+        <el-dialog title="输入图片链接添加" :visible.sync="dialogCoverVisible">
+          <el-input v-model="inputUrl" />
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogCoverVisible = false">
+              Cancel
+            </el-button>
+            <el-button type="primary" @click="changeCoverImage">
+              Confirm
+            </el-button>
+          </div>
+        </el-dialog>
       </div>
-    </el-dialog>
-  </div>
-</template>
+    </el-form></div></template>
 
 <script>
 import Tinymce from '@/components/Tinymce'
@@ -145,8 +144,7 @@ import { validURL } from '@/utils/validate'
 import { fetchArticle, createArticle, updateArticle } from '@/api/article'
 import Upload from '@/components/Upload/SingleImage3'
 import { fetchList } from '@/api/classify'
-import ajax from 'element-ui/packages/upload/src/ajax'
-import Global from '@/Global'
+import { upload } from '@/api/upload'
 
 const defaultForm = {
   status: 'draft',
@@ -221,6 +219,7 @@ export default {
       imageShow: false,
       imageShowUrl: '',
       fileList: [],
+      uploadFileList: [],
       dialogCoverVisible: false,
       inputUrl: '',
       dialogStatus: undefined,
@@ -359,11 +358,25 @@ export default {
     getRemoteClassList() {
       fetchList().then(response => {
         if (!response.data) return
-        this.classListOptions = response.data
+        const list = []
+        response.data.forEach(function(item) {
+          console.log(item)
+          if (item.type === 0) {
+            list.push(item)
+          }
+        })
+        this.classListOptions = list
       })
     },
     // 文件上传列表删除
     handleRemove(file, fileList) {
+      this.uploadFileList.some((item, i) => {
+        if (item.uid === file.uid) {
+          this.uploadFileList.splice(i, 1)
+          return true
+        }
+      })
+
       this.fileList.some((item, i) => {
         if (item.name === file.name) {
           this.fileList.splice(i, 1)
@@ -371,33 +384,36 @@ export default {
         }
       })
     },
-    handleChange(fileList) {
-      console.log(fileList)
+    submitUpload() {
+      if (this.uploadFileList.length === 0) {
+        return
+      }
+      const formData = new FormData()
+      this.uploadFileList.forEach(function(item) {
+        formData.append('file', item)
+      })
+
+      upload(formData).then(response => {
+        if (!response.data) return
+        this.uploadFileList = []
+        response.data.map((url) => {
+          const data = {
+            name: url,
+            url: url
+          }
+          this.fileList.push(data)
+        })
+      })
     },
     // 覆盖默认的上传行为
     uploadFile(options) {
-      const { file } = options
-      if (file.type.indexOf('image/') > -1) {
-        options.action = Global.base_upload_url
-      } else {
-        options.action = Global.base_upload_url
-      }
-      // this.isUploading = true;
-      return ajax(options)
+      this.uploadFileList.push(options.file)
+    },
+    handleChange(fileList) {
+      console.log(fileList)
     },
     handleImageSuccess(res, file, fileList) {
-      console.log('=========')
       console.log(fileList)
-      const list = fileList.map((item) => {
-        if (item.response) {
-          const data = {
-            name: item.response.data[0],
-            url: item.response.data[0]
-          }
-          return data
-        }
-      })
-      this.fileList = list
     },
     // 文件上传列表预览
     handlePreview(file) {
