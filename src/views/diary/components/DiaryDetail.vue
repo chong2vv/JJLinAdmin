@@ -45,7 +45,7 @@
         </div>
 
         <el-form-item style="margin-bottom: 40px;" label-width="60px" label="简介:">
-          <el-input v-model="postForm.excerpt" :rows="1" type="textarea" class="article-textarea" autosize placeholder="请填写简介" />
+          <el-input v-model="postForm.excerpt" :rows="1" type="textarea" class="diary-textarea" autosize placeholder="请填写简介" />
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}words</span>
         </el-form-item>
 
@@ -71,30 +71,6 @@
           <el-button v-else class="button-new-tag" size="small" @click="showTagInput">+ 新标签</el-button>
         </el-form-item>
 
-        <el-form-item prop="content" style="margin-bottom: 30px;">
-          <Tinymce ref="editor" v-model="postForm.content" :height="400" />
-        </el-form-item>
-
-        <el-form-item prop="img" label="封面图" style="margin-bottom: 30px;">
-          <el-button size="small" type="primary" @click="dialogCoverVisible = true; dialogStatus = 1">链接添加</el-button>
-          <Upload v-model="postForm.img" />
-        </el-form-item>
-
-        <el-form-item
-          v-for="(video, index) in postForm.video_list"
-          :key="index"
-          :label="'链接' + `${index + 1}`"
-          :rules="{required: true, message: '链接不能为空', trigger: 'blur'}"
-        >
-          <el-input v-model="postForm.video_list[index]" />
-          <el-button @click.prevent="removeVideo(video)">
-            删除
-          </el-button>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button @click="addVideo">新增视频外链</el-button>
-        </el-form-item>
         <el-form-item prop="img_list" label="图片/视频" style="margin-bottom: 30px;">
           <el-button size="small" type="primary" @click="dialogCoverVisible = true; dialogStatus = 3">通过链接添加</el-button>
           <el-upload
@@ -138,12 +114,9 @@
 </template>
 
 <script>
-import Tinymce from '@/components/Tinymce'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
-import { validURL } from '@/utils/validate'
-import { fetchArticle, createArticle, updateArticle } from '@/api/article'
-import Upload from '@/components/Upload/SingleImage3'
+import { fetchDiary, createDiary, updateDiary } from '@/api/diary'
 import { fetchList } from '@/api/classify'
 import ajax from 'element-ui/packages/upload/src/ajax'
 import Global from '@/Global'
@@ -172,8 +145,8 @@ const defaultForm = {
 }
 
 export default {
-  name: 'ArticleDetail',
-  components: { Tinymce, MDinput, Sticky, Upload, 'el-image-viewer': () => import('element-ui/packages/image/src/image-viewer') },
+  name: 'DiaryDetail',
+  components: { MDinput, Sticky, 'el-image-viewer': () => import('element-ui/packages/image/src/image-viewer') },
   props: {
     isEdit: {
       type: Boolean,
@@ -192,29 +165,13 @@ export default {
         callback()
       }
     }
-    const validateSourceUri = (rule, value, callback) => {
-      if (value) {
-        if (validURL(value)) {
-          callback()
-        } else {
-          this.$message({
-            message: '图片url填写不正确',
-            type: 'error'
-          })
-          callback(new Error('图片url填写不正确'))
-        }
-      } else {
-        callback()
-      }
-    }
     return {
       postForm: Object.assign({}, defaultForm),
       loading: false,
       userListOptions: [],
       rules: {
         excerpt: [{ validator: validateRequire }],
-        title: [{ validator: validateRequire }],
-        img: [{ validator: validateSourceUri, trigger: 'blur' }]
+        title: [{ validator: validateRequire }]
       },
       tempRoute: {},
       classListOptions: [],
@@ -257,13 +214,12 @@ export default {
   },
   methods: {
     fetchData(id) {
-      fetchArticle(id).then(response => {
+      fetchDiary(id).then(response => {
         this.postForm = response.data
-        this.fileList = this.postForm.img_list.map((url, index) => {
+        this.fileList = this.postForm.img_list.map((url) => {
           const data = {
             name: url,
-            url: url,
-            uid: index
+            url: url
           }
           return data
         })
@@ -281,7 +237,7 @@ export default {
       this.$store.dispatch('tagsView/updateVisitedView', route)
     },
     setPageTitle() {
-      const title = 'Edit Article'
+      const title = 'Edit Diary'
       document.title = `${title} - ${this.postForm.id}`
     },
     submitForm() {
@@ -297,9 +253,9 @@ export default {
           const data = this.postForm
           console.log(data.img)
           if (this.isEdit) {
-            this.handleUpdateArticle(data)
+            this.handleUpdateDiary(data)
           } else {
-            this.handleCreateArticle(data)
+            this.handleCreateDiary(data)
           }
         } else {
           console.log('error submit!!')
@@ -325,14 +281,14 @@ export default {
       const data = this.postForm
       console.log(data.img)
       if (this.isEdit) {
-        this.handleUpdateArticle(data)
+        this.handleUpdateDiary(data)
       } else {
-        this.handleCreateArticle(data)
+        this.handleCreateDiary(data)
       }
     },
-    handleCreateArticle(data) {
+    handleCreateDiary(data) {
       this.loading = true
-      createArticle(data).then(response => {
+      createDiary(data).then(response => {
         this.loading = false
         this.postForm = response.data
         this.$notify({
@@ -343,9 +299,9 @@ export default {
         })
       })
     },
-    handleUpdateArticle(data) {
+    handleUpdateDiary(data) {
       this.loading = true
-      updateArticle(data).then(response => {
+      updateDiary(data).then(response => {
         this.loading = false
         this.$notify({
           title: '成功',
@@ -364,15 +320,13 @@ export default {
     },
     // 文件上传列表删除
     handleRemove(file, fileList) {
+      console.log('难道是你？？？？？？')
       this.fileList.some((item, i) => {
         if (item.name === file.name) {
           this.fileList.splice(i, 1)
           return true
         }
       })
-    },
-    handleChange(fileList) {
-      console.log(fileList)
     },
     // 覆盖默认的上传行为
     uploadFile(options) {
@@ -385,19 +339,49 @@ export default {
       // this.isUploading = true;
       return ajax(options)
     },
+    handleChange(fileList) {
+
+    },
     handleImageSuccess(res, file, fileList) {
-      console.log('=========')
-      console.log(fileList)
       const list = fileList.map((item) => {
         if (item.response) {
           const data = {
             name: item.response.data[0],
-            url: item.response.data[0]
+            url: item.response.data[0],
+            uid: item.uid
+          }
+          return data
+        } else if (!item.response && item.url) {
+          const data = {
+            name: item.name,
+            url: item.url,
+            uid: item.uid
           }
           return data
         }
       })
-      this.fileList = list
+
+      list.some((item, i) => {
+        if (item === undefined) {
+          list.splice(i, 1)
+        }
+      })
+
+      console.log('=============')
+      console.log(list)
+      console.log('-------------')
+      this.fileList = list.map((item) => {
+        if (item) {
+          const data = {
+            name: item.url,
+            url: item.url,
+            uid: item.uid
+          }
+          return data
+        } else {
+          return null
+        }
+      })
     },
     // 文件上传列表预览
     handlePreview(file) {
@@ -477,7 +461,7 @@ export default {
   }
 }
 
-.article-textarea ::v-deep {
+.diary-textarea ::v-deep {
   textarea {
     padding-right: 40px;
     resize: none;

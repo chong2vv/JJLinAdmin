@@ -112,6 +112,35 @@ export const constantRoutes = [
   },
 
   {
+    path: '/diary',
+    component: Layout,
+    name: 'Diary',
+    redirect: '/diary/list',
+    meta: { title: '随手记', icon: 'documentation' },
+    children: [
+      {
+        path: 'list',
+        name: 'DiaryList',
+        component: () => import('@/views/diary/list'),
+        meta: { title: '日记列表', icon: 'nested' }
+      },
+      {
+        path: 'create',
+        name: 'CreateDiary',
+        component: () => import('@/views/diary/create'),
+        meta: { title: '创建日记', icon: 'tree' }
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        component: () => import('@/views/diary/edit'),
+        name: 'EditDiary',
+        meta: { title: '编辑日记', noCache: true, activeMenu: '/diary/diary' },
+        hidden: true
+      }
+    ]
+  },
+
+  {
     path: '/message',
     component: Layout,
     children: [
@@ -123,46 +152,6 @@ export const constantRoutes = [
       }
     ]
   },
-
-  // {
-  //   path: '/goods',
-  //   component: Layout,
-  //   name: 'Goods',
-  //   redirect: '/goods/goods',
-  //   meta: { title: '商品', icon: 'el-icon-s-help' },
-  //   children: [
-  //     {
-  //       path: 'goods',
-  //       name: 'goods',
-  //       component: () => import('@/views/goods/list'),
-  //       meta: { title: '商品列表', icon: 'shopping' }
-  //     },
-  //     {
-  //       path: 'create',
-  //       name: 'create',
-  //       component: () => import('@/views/goods/create'),
-  //       meta: { title: '创建商品', icon: 'tree' }
-  //     },
-  //     {
-  //       path: 'edit/:id(\\d+)',
-  //       component: () => import('@/views/goods/edit'),
-  //       name: 'edit',
-  //       meta: { title: '编辑商品', noCache: true, activeMenu: '/goods/goods' },
-  //       hidden: true
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: 'external-link',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'http://8.142.125.160:9528/',
-  //       meta: { title: 'HouseIn官网', icon: 'link' }
-  //     }
-  //   ]
-  // },
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
