@@ -39,36 +39,6 @@
           <span>{{ scope.row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="邮箱" width="160" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.email }}
-        </template>
-      </el-table-column>
-      <el-table-column label="电话" width="160" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.phone }}
-        </template>
-      </el-table-column>
-      <el-table-column class-name="status-col" label="状态" width="80" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusTypeFilter">{{ scope.row.status | statusFilter }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column class-name="status-col" label="站点" width="100" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.website | fromWebsiteFilter }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column class-name="status-col" label="来源" width="100" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.from_type | fromTypeFilter }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column class-name="status-col" label="来源品名" width="150" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.from_title }}</span>
-        </template>
-      </el-table-column>
       <el-table-column align="center" prop="created_at" label="发件时间" width="110">
         <template slot-scope="scope">
           <i class="el-icon-time" />
@@ -77,11 +47,8 @@
       </el-table-column>
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.status !== 1" size="mini" @click="handleModifyStatus(scope.row,1)">
-            已处理
-          </el-button>
-          <el-button size="mini" type="success" @click="viewDetail(scope.row)">
-            详情
+          <el-button v-if="scope.row.status !== 0" size="mini" @click="handleModifyStatus(scope.row,0)">
+            删除
           </el-button>
           <el-button size="mini" type="success" @click="sendMessage(scope.row)">
             发消息
@@ -103,24 +70,12 @@
           <label style="padding-left:0;">{{ temp.title }}</label>
         </div>
         <div>
-          <label class="radio-label" style="padding-left:0;">邮箱: </label>
-          <label style="padding-left:0;">{{ temp.email }}</label>
-        </div>
-        <div>
-          <label class="radio-label" style="padding-left:0;">电话: </label>
-          <label style="padding-left:0;">{{ temp.phone }}</label>
-        </div>
-        <div>
           <label class="radio-label" style="padding-left:0;">用户名: </label>
           <label style="padding-left:0;">{{ temp.name }}</label>
         </div>
         <div>
           <label class="radio-label" style="padding-left:0;">内容: </label>
           <label style="padding-left:0;">{{ temp.content }}</label>
-        </div>
-        <div>
-          <label class="radio-label" style="padding-left:0;">来源: </label>
-          <label style="padding-left:0;">{{ temp.from_type | fromTypeFilter }}</label>
         </div>
       </template>
 
@@ -158,20 +113,15 @@ export default {
     },
     statusFilter(status) {
       const statusMap = {
-        0: '未处理',
-        1: '已处理'
+        0: '已隐藏',
+        1: '显示中'
       }
       return statusMap[status]
     },
     // 来源type
     fromTypeFilter(status) {
       const statusMap = {
-        0: '联系我们',
-        1: '商品页',
-        2: 'Blog页',
-        3: '首页',
-        4: '关于我们',
-        5: '页脚'
+        0: '联系我们'
       }
       return statusMap[status]
     },
@@ -202,19 +152,13 @@ export default {
         create_at: '',
         name: '',
         content: '',
-        email: '',
-        phone: '',
-        website: 0,
-        from_type: undefined,
-        from_id: undefined,
-        from_title: '',
-        status: 0
+        status: 1
       },
       sendMessageTemp: {
         email: '',
         content: ''
       },
-      statusOptions: [{ label: '已处理', value: 0 }, { label: '未处理', value: 1 }],
+      statusOptions: [{ label: '下线', value: 0 }, { label: '显示', value: 1 }],
       dialogFormVisible: false,
       dialogStatus: '详情'
     }
@@ -243,11 +187,6 @@ export default {
         timestamp: undefined,
         create_at: '',
         content: '',
-        email: '',
-        phone: '',
-        from_type: undefined,
-        from_id: undefined,
-        from_title: '',
         status: undefined
       }
     },

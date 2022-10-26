@@ -148,7 +148,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'message',
         component: () => import('@/views/message/index'),
-        meta: { title: '信息', icon: 'email' }
+        meta: { title: '悄悄话', icon: 'email' }
       }
     ]
   },

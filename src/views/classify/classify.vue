@@ -129,7 +129,8 @@ export default {
     typeFilter(type) {
       const typeMap = {
         0: '默认页面',
-        1: '随心记'
+        1: '随心记',
+        2: '悄悄话'
       }
       return typeMap[type]
     }
@@ -173,6 +174,10 @@ export default {
         {
           value: 1,
           label: '随心记'
+        },
+        {
+          value: 2,
+          label: '悄悄话'
         }
       ],
       dialogFormVisible: false,
