@@ -39,3 +39,11 @@ export function updateArticle(data) {
     data
   })
 }
+
+export function updateArticleStatus(data) {
+  return request({
+    url: '/vue-admin-template/blog/update-status',
+    method: 'post',
+    data
+  })
+}

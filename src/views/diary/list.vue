@@ -68,11 +68,11 @@
             </el-button>
           </router-link>
 
-          <el-button v-if="scope.row.status !== 1" size="mini" type="success" style="margin-left: 10px;" @click="handleModifyStatus(row,1)">
+          <el-button v-if="scope.row.status !== 1" size="mini" type="success" style="margin-left: 10px;" @click="handleModifyStatus(scope.row,1)">
             上架
           </el-button>
 
-          <el-button v-if="scope.row.status !== 0" size="mini" style="margin-left: 10px;" @click="handleModifyStatus(row,0)">
+          <el-button v-if="scope.row.status !== 0" size="mini" style="margin-left: 10px;" @click="handleModifyStatus(scope.row,0)">
             下架
           </el-button>
 
@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/diary'
+import { fetchList, updateDiaryStatus } from '@/api/diary'
 import { fetchList as fetchClassList } from '@/api/classify'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves'
@@ -152,7 +152,13 @@ export default {
       this.getList()
     },
     handleModifyStatus(row, status) {
-
+      console.log(status)
+      const temp = Object.assign({}, row) // copy obj
+      console.log(temp)
+      temp.status = status
+      updateDiaryStatus(temp).then(data => {
+        row.status = status
+      })
     }
   }
 }

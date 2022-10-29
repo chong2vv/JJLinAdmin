@@ -31,3 +31,11 @@ export function updateDiary(data) {
     data
   })
 }
+
+export function updateDiaryStatus(data) {
+  return request({
+    url: '/vue-admin-template/diary/update-status',
+    method: 'post',
+    data
+  })
+}

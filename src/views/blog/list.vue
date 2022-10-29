@@ -91,7 +91,7 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/article'
+import { fetchList, updateArticleStatus } from '@/api/article'
 import { fetchList as fetchClassList } from '@/api/classify'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves'
@@ -162,7 +162,13 @@ export default {
       window.open(openUrl, '_blank')
     },
     handleModifyStatus(row, status) {
-
+      console.log(status)
+      const temp = Object.assign({}, row) // copy obj
+      console.log(temp)
+      temp.status = status
+      updateArticleStatus(temp).then(data => {
+        row.status = status
+      })
     }
   }
 }
