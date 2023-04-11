@@ -96,7 +96,6 @@
           <el-button @click="addVideo">新增视频外链</el-button>
         </el-form-item>
         <el-form-item prop="img_list" label="图片/视频" style="margin-bottom: 30px;">
-          <el-button size="small" type="primary" @click="dialogCoverVisible = true; dialogStatus = 3">通过链接添加</el-button>
           <el-upload
             ref="upload"
             class="upload-demo"
@@ -133,6 +132,18 @@
             </el-button>
           </div>
         </el-dialog>
+
+        <el-dialog title="输入图片链接批量添加" :visible.sync="dialogImageListVisible">
+          <el-input v-model="inputUrl" />
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogImageListVisible = false">
+              Cancel
+            </el-button>
+            <el-button type="primary" @click="changeCoverImage">
+              Confirm
+            </el-button>
+          </div>
+        </el-dialog>
       </div>
     </el-form></div></template>
 
@@ -141,7 +152,7 @@ import Tinymce from '@/components/Tinymce'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { validURL } from '@/utils/validate'
-import { fetchArticle, createArticle, updateArticle } from '@/api/article'
+import { createArticle, fetchArticle, updateArticle } from '@/api/article'
 import Upload from '@/components/Upload/SingleImage3'
 import { fetchList } from '@/api/classify'
 import { upload } from '@/api/upload'
@@ -221,6 +232,7 @@ export default {
       fileList: [],
       uploadFileList: [],
       dialogCoverVisible: false,
+      dialogImageListVisible: false,
       inputUrl: '',
       dialogStatus: undefined,
       inputVisible: false, // 是否可编辑标签
@@ -259,12 +271,11 @@ export default {
       fetchArticle(id).then(response => {
         this.postForm = response.data
         this.fileList = this.postForm.img_list.map((url, index) => {
-          const data = {
+          return {
             name: url,
             url: url,
             uid: index
           }
-          return data
         })
         // set tagsview title
         this.setTagsViewTitle()
