@@ -112,6 +112,35 @@ export const constantRoutes = [
   },
 
   {
+    path: '/project',
+    component: Layout,
+    name: 'Project',
+    redirect: '/project/list',
+    meta: { title: '项目', icon: 'documentation' },
+    children: [
+      {
+        path: 'list',
+        name: 'ProjectList',
+        component: () => import('@/views/project/list'),
+        meta: { title: '项目列表', icon: 'nested' }
+      },
+      {
+        path: 'create',
+        name: 'CreateProject',
+        component: () => import('@/views/project/create'),
+        meta: { title: '创建项目', icon: 'tree' }
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        component: () => import('@/views/project/edit'),
+        name: 'EditProject',
+        meta: { title: '编辑项目', noCache: true, activeMenu: '/project/project' },
+        hidden: true
+      }
+    ]
+  },
+
+  {
     path: '/diary',
     component: Layout,
     name: 'Diary',

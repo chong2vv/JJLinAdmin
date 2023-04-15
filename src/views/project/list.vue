@@ -156,7 +156,7 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination'
 
 export default {
-  name: 'ComplexTable',
+  name: 'ProjectList',
   components: { Pagination },
   directives: { waves },
   filters: {
