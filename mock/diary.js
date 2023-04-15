@@ -27,7 +27,7 @@ for (let i = 0; i < count; i++) {
 
 module.exports = [
   {
-    url: '/vue-admin-template/blog/list',
+    url: '/vue-admin-template/diary/list',
     type: 'get',
     response: config => {
       const { search_str, page = 1, count = 20, sort } = config.query
@@ -52,15 +52,15 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/blog/detail',
+    url: '/vue-admin-template/diary/detail',
     type: 'get',
     response: config => {
       const { id } = config.query
-      for (const article of List) {
-        if (article.id === +id) {
+      for (const diary of List) {
+        if (diary.id === +id) {
           return {
             code: 200,
-            data: article
+            data: diary
           }
         }
       }
@@ -68,7 +68,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/blog/pv',
+    url: '/vue-admin-template/diary/pv',
     type: 'get',
     response: _ => {
       return {
@@ -86,7 +86,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/blog/create',
+    url: '/vue-admin-template/diary/create',
     type: 'post',
     response: _ => {
       return {
@@ -97,7 +97,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/blog/update',
+    url: '/vue-admin-template/diary/update',
     type: 'post',
     response: _ => {
       return {

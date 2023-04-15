@@ -46,7 +46,7 @@ module.exports = [
     type: 'post',
     response: config => {
       const { username } = config.body
-      const info = users["admin-token"]
+      const info = users['admin-token']
       return {
         code: 200,
         data: info
@@ -60,7 +60,7 @@ module.exports = [
     type: 'get',
     response: config => {
       const { id } = config.query
-      const info = users["admin-token"]
+      const info = users['admin-token']
 
       // mock error
       if (!info) {
@@ -93,7 +93,7 @@ module.exports = [
     url: '/vue-admin-template/user/list',
     type: 'get',
     response: config => {
-      const { title, page=1, count=10, sort } = config.query
+      const { title, page = 1, count = 10, sort } = config.query
 
       let mockList = List.filter(item => {
         if (title && item.title.indexOf(title) < 0) return false
@@ -104,7 +104,7 @@ module.exports = [
         mockList = mockList.reverse()
       }
 
-      const pageList = mockList.filter((item, index) => index < count * page && index >= count * (page - 1) &&item.status !== -1)
+      const pageList = mockList.filter((item, index) => index < count * page && index >= count * (page - 1) && item.status !== -1)
       return {
         code: 200,
         total_count: mockList.length,

@@ -2,37 +2,37 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/vue-admin-template/goods/list',
+    url: '/vue-admin-template/project/list',
     method: 'get',
     params: query
   })
 }
 
-export function fetchGoods(id) {
+export function fetchProject(id) {
   return request({
-    url: '/vue-admin-template/goods/detail',
+    url: '/vue-admin-template/project/detail',
     method: 'get',
     params: { id }
   })
 }
 
-export function createGoods(data) {
+export function createProject(data) {
   return request({
-    url: '/vue-admin-template/goods/create',
+    url: '/vue-admin-template/project/create',
     method: 'post',
     data
   })
 }
 
-export function updateGoods(data) {
+export function updateProject(data) {
   return request({
-    url: '/vue-admin-template/goods/update',
+    url: '/vue-admin-template/project/update',
     method: 'post',
     data
   })
 }
 
-export function opGoods(data) {
+export function opProject(data) {
   return request({
     url: '/vue-admin-template/user/op',
     method: 'post',
@@ -40,9 +40,9 @@ export function opGoods(data) {
   })
 }
 
-export function downLoadGoodsExcel(data) {
+export function downLoadProjectExcel(data) {
   return request({
-    url: '/vue-admin-template/goods/exportGoodsExcelFile',
+    url: '/vue-admin-template/project/exportProjectExcelFile',
     method: 'post',
     data
   })

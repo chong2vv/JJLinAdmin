@@ -33,7 +33,7 @@ module.exports = [
         mockList = mockList.reverse()
       }
 
-      const pageList = mockList.filter((item, index) => index < count * page && index >= count * (page - 1) &&item.status !== -1)
+      const pageList = mockList.filter((item, index) => index < count * page && index >= count * (page - 1) && item.status !== -1)
 
       return {
         code: 200,
@@ -64,7 +64,7 @@ module.exports = [
     type: 'post',
     response: config => {
       const { title, remark, status } = config.body
-      let data = {}
+      const data = {}
       data.title = title
       data.remark = remark
       data.status = status

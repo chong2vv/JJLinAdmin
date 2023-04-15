@@ -35,7 +35,7 @@ module.exports = [
         mockList = mockList.reverse()
       }
 
-      const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1) &&item.status !== '-1')
+      const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1) && item.status !== '-1')
 
       return {
         code: 200,

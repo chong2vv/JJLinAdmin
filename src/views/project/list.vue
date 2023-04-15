@@ -14,12 +14,12 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <router-link :to="'/goods/create'">
+      <router-link :to="'/project/create'">
         <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit">
           新增商品
         </el-button>
       </router-link>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-download" @click="handleGoodsExport">
+      <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-download" @click="handleProjectExport">
         导出指定商品
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-upload" @click="dialogUploadVisible = true">
@@ -99,7 +99,7 @@
 
       <el-table-column fixed="right" label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <router-link :to="'/goods/edit/'+row.id">
+          <router-link :to="'/project/edit/'+row.id">
             <el-button type="primary" size="small" icon="el-icon-edit">
               编辑
             </el-button>
@@ -149,7 +149,7 @@
 </template>
 
 <script>
-import { downLoadGoodsExcel, fetchList } from '@/api/goods'
+import { downLoadProjectExcel, fetchList } from '@/api/project'
 import { fetchList as fetchClassList } from '@/api/classify'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
@@ -284,15 +284,15 @@ export default {
       const openUrl = process.env.VUE_APP_WEB_URL + 'product-detail/' + row.id
       window.open(openUrl, '_blank')
     },
-    handleGoodsExport() {
+    handleProjectExport() {
       const data = {
-        goods: this.selectList
+        project: this.selectList
       }
-      downLoadGoodsExcel(data).then(response => {
+      downLoadProjectExcel(data).then(response => {
         // 创建a标签
         const link = document.createElement('a')
         // 设置a标签的href（点击地址）
-        const href = process.env.VUE_APP_BASE_API + '/vue-admin-template/goods/exportExcelFile?fileName=' + response.data
+        const href = process.env.VUE_APP_BASE_API + '/vue-admin-template/project/exportExcelFile?fileName=' + response.data
         console.log(href)
         link.href = href
         const _fileName = 'ProductExcel'
@@ -378,7 +378,7 @@ export default {
       // 创建a标签
       const link = document.createElement('a')
       // 设置a标签的href（点击地址）
-      link.href = process.env.VUE_APP_BASE_API + '/vue-admin-template/goods/downloadExcelFile'
+      link.href = process.env.VUE_APP_BASE_API + '/vue-admin-template/project/downloadExcelFile'
       // 设置a标签属性
       link.setAttribute('download', '商品模板.xlsx')
       // 点击a标签

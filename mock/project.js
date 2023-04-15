@@ -34,7 +34,7 @@ for (let i = 0; i < count; i++) {
 
 module.exports = [
   {
-    url: '/vue-admin-template/goods/list',
+    url: '/vue-admin-template/project/list',
     type: 'get',
     response: config => {
       const { search_str, page = 1, count = 20, sort } = config.query
@@ -59,15 +59,15 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/goods/detail',
+    url: '/vue-admin-template/project/detail',
     type: 'get',
     response: config => {
       const { id } = config.query
-      for (const goods of List) {
-        if (goods.id === +id) {
+      for (const project of List) {
+        if (project.id === +id) {
           return {
             code: 200,
-            data: goods
+            data: project
           }
         }
       }
@@ -75,7 +75,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/goods/create',
+    url: '/vue-admin-template/project/create',
     type: 'post',
     response: config => {
       const data = config.body
@@ -88,7 +88,7 @@ module.exports = [
   },
 
   {
-    url: '/vue-admin-template/goods/update',
+    url: '/vue-admin-template/project/update',
     type: 'post',
     response: _ => {
       return {

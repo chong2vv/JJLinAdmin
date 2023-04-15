@@ -107,7 +107,7 @@
         </el-form-item>
 
         <el-form-item prop="content" style="margin-bottom: 30px;">
-          <Tinymce ref="editor" v-model="postForm.goods_body" :height="400" />
+          <Tinymce ref="editor" v-model="postForm.project_body" :height="400" />
         </el-form-item>
 
         <el-form-item
@@ -169,7 +169,7 @@
 import Upload from '@/components/Upload/SingleImage3'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import Tinymce from '@/components/Tinymce'
-import { createGoods, fetchGoods, updateGoods } from '@/api/goods'
+import { createProject, fetchProject, updateProject } from '@/api/project'
 import { fetchList } from '@/api/classify'
 
 const defaultForm = {
@@ -179,7 +179,7 @@ const defaultForm = {
   content: '', // 商品描述
   excerpt: '', // 短描述
   size: '', // 尺寸
-  goods_body: '',
+  project_body: '',
   video_url: '',
   video_img: '',
   material: '', // 材料
@@ -200,7 +200,7 @@ const defaultForm = {
 }
 
 export default {
-  name: 'GoodsDetail',
+  name: 'ProjectDetail',
   components: { Upload, Sticky, Tinymce, 'el-image-viewer': () => import('element-ui/packages/image/src/image-viewer') },
   props: {
     isEdit: {
@@ -246,7 +246,7 @@ export default {
   },
   methods: {
     fetchData(id) {
-      fetchGoods(id).then(response => {
+      fetchProject(id).then(response => {
         this.postForm = response.data
         this.fileList = this.postForm.img_list.map((url) => {
           const data = {
@@ -288,9 +288,9 @@ export default {
           this.postForm.classify_id = this.postForm.classify.id
           const data = this.postForm
           if (this.isEdit) {
-            this.handleUpdateGoods(data)
+            this.handleUpdateProject(data)
           } else {
-            this.handleCreateGoods(data)
+            this.handleCreateProject(data)
           }
         } else {
           console.log('error submit!!')
@@ -316,15 +316,15 @@ export default {
       this.postForm.status = 0
       const data = this.postForm
       if (this.isEdit) {
-        this.handleUpdateGoods(data)
+        this.handleUpdateProject(data)
       } else {
-        this.handleCreateGoods(data)
+        this.handleCreateProject(data)
       }
     },
-    handleCreateGoods(data) {
+    handleCreateProject(data) {
       this.loading = true
       console.log(data)
-      createGoods(data).then(response => {
+      createProject(data).then(response => {
         this.loading = false
         this.$router.go(-1)
         this.$notify({
@@ -343,9 +343,9 @@ export default {
         })
       })
     },
-    handleUpdateGoods(data) {
+    handleUpdateProject(data) {
       this.loading = true
-      updateGoods(data).then(response => {
+      updateProject(data).then(response => {
         this.loading = false
         this.$router.go(-1)
         this.$notify({
