@@ -27,7 +27,7 @@ const users = {
 const List = []
 const count = 100
 
-const baseContent = '这是一条测试的信息，哈哈哈哈哈哈哈'
+// const baseContent = '这是一条测试的信息，哈哈哈哈哈哈哈'
 const image_uri = 'https://wpimg.wallstcn.com/e4558086-631c-425c-9430-56ffb46e70b3'
 
 for (let i = 0; i < count; i++) {
@@ -46,6 +46,7 @@ module.exports = [
     type: 'post',
     response: config => {
       const { username } = config.body
+      console.log('username === ' + username)
       const info = users['admin-token']
       return {
         code: 200,
@@ -60,6 +61,7 @@ module.exports = [
     type: 'get',
     response: config => {
       const { id } = config.query
+      console.log('id === ' + id)
       const info = users['admin-token']
 
       // mock error

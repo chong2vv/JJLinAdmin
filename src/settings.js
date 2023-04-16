@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'YD Kuma Admin',
+  title: 'YD Blog Admin',
 
   /**
    * @type {boolean} true | false

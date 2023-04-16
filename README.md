@@ -1,6 +1,6 @@
-# YD KUMA ADMIN
+# YD BLOG ADMIN
 
-> Kuma Admin
+> Blog Admin
 
 **The current version is `v4.0+` build on `vue-cli`.**
 

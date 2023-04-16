@@ -1,7 +1,7 @@
 {
-  "name": "Kuma_Admin",
+  "name": "Blog_Admin",
   "version": "4.4.0",
-  "description": "Kuma Admin",
+  "description": "Blog Admin",
   "author": "wyd<chong2vv@gmail.com>",
   "scripts": {
     "dev": "vue-cli-service serve",
@@ -89,7 +89,7 @@
     "admin",
     "dashboard",
     "element-ui",
-    "kuma",
+    "blog",
     "admin-template",
     "management-system"
   ],

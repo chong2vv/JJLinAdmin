@@ -9,6 +9,7 @@ const message = require('./message')
 const project = require('./project')
 const banner = require('./banner')
 const diary = require('./diary')
+const categories = require('./categories')
 
 const mocks = [
   ...user,
@@ -18,6 +19,7 @@ const mocks = [
   ...message,
   ...project,
   ...diary,
+  ...categories,
   ...banner
 ]
 

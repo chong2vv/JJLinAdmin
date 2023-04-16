@@ -70,14 +70,14 @@ export const constantRoutes = [
   },
 
   {
-    path: '/classify',
+    path: '/categories',
     component: Layout,
     children: [
       {
-        path: 'classify',
-        name: 'classify',
-        component: () => import('@/views/classify/classify'),
-        meta: { title: '模块', icon: 'table' }
+        path: 'categories',
+        name: 'categories',
+        component: () => import('@/views/categories/categories'),
+        meta: { title: '分类', icon: 'table' }
       }
     ]
   },
@@ -107,6 +107,19 @@ export const constantRoutes = [
         name: 'EditArticle',
         meta: { title: '编辑文章', noCache: true, activeMenu: '/blog/blog' },
         hidden: true
+      }
+    ]
+  },
+
+  {
+    path: '/classify',
+    component: Layout,
+    children: [
+      {
+        path: 'classify',
+        name: 'classify',
+        component: () => import('@/views/classify/classify'),
+        meta: { title: '模块', icon: 'table' }
       }
     ]
   },
