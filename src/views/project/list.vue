@@ -16,14 +16,14 @@
       </el-button>
       <router-link :to="'/project/create'">
         <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit">
-          新增商品
+          新增项目
         </el-button>
       </router-link>
       <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-download" @click="handleProjectExport">
-        导出指定商品
+        导出指定项目
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-upload" @click="dialogUploadVisible = true">
-        批量上传商品
+        批量上传项目
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-download" @click="fileDownload">
         下载Excel模板
@@ -51,7 +51,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column fixed label="商品名" min-width="100px">
+      <el-table-column fixed label="项目名" min-width="100px">
         <template slot-scope="{row}">
           <span class="link-type">{{ row.title }}</span>
         </template>
@@ -203,8 +203,8 @@ export default {
       temp: {
         id: undefined,
         status: undefined,
-        title: '', // 商品名
-        content: '', // 商品描述
+        title: '', // 项目名
+        content: '', // 项目描述
         excerpt: 'test', // 短描述
         size: 'test', // 尺寸
         material: '', // 材料
@@ -234,8 +234,8 @@ export default {
       this.temp = {
         id: undefined,
         status: undefined,
-        title: '', // 商品名
-        content: '', // 商品描述
+        title: '', // 项目名
+        content: '', // 项目描述
         excerpt: '', // 短描述
         size: '', // 尺寸
         material: '', // 材料
@@ -380,7 +380,7 @@ export default {
       // 设置a标签的href（点击地址）
       link.href = process.env.VUE_APP_BASE_API + '/vue-admin-template/project/downloadExcelFile'
       // 设置a标签属性
-      link.setAttribute('download', '商品模板.xlsx')
+      link.setAttribute('download', '项目模板.xlsx')
       // 点击a标签
       document.body.appendChild(link)
       link.click()

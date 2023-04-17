@@ -36,7 +36,7 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label-width="60px" label="分类:" class="postInfo-container-item">
-                <el-select v-model="postForm.classify" value-key="id" clearable class="filter-item" placeholder="选择分类">
+                <el-select v-model="postForm.categories" value-key="id" clearable class="filter-item" placeholder="选择分类">
                   <el-option v-for="item in classListOptions" :key="item.id" :label="item.title" :value="item" />
                 </el-select>
               </el-form-item>
@@ -154,7 +154,7 @@ import Sticky from '@/components/Sticky' // 粘性header组件
 import { validURL } from '@/utils/validate'
 import { createArticle, fetchArticle, updateArticle } from '@/api/article'
 import Upload from '@/components/Upload/SingleImage3'
-import { fetchList } from '@/api/classify'
+import { fetchList } from '@/api/categories'
 import { upload } from '@/api/upload'
 
 const defaultForm = {
@@ -171,7 +171,7 @@ const defaultForm = {
   video_list: [], // ytb链接数组
   tags: [], // 标签数组
   classify_id: undefined,
-  classify: {
+  categories: {
     id: undefined,
     title: '',
     image_url: ''
@@ -303,7 +303,7 @@ export default {
               return item.url
             })
           }
-          this.postForm.classify_id = this.postForm.classify.id
+          this.postForm.classify_id = this.postForm.categories.id
           const data = this.postForm
           console.log(data.img)
           if (this.isEdit) {
@@ -331,7 +331,7 @@ export default {
           return item.url
         })
       }
-      this.postForm.classify_id = this.postForm.classify.id
+      this.postForm.classify_id = this.postForm.categories.id
       const data = this.postForm
       console.log(data.img)
       if (this.isEdit) {

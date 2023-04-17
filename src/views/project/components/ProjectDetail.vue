@@ -14,28 +14,8 @@
       <div class="createPost-main-container">
         <el-row>
           <el-col :span="24">
-            <el-form-item label="商品名称:">
+            <el-form-item label="标题:">
               <el-input v-model="postForm.title" />
-            </el-form-item>
-
-            <el-form-item label="尺寸:">
-              <el-input v-model="postForm.size" />
-            </el-form-item>
-
-            <el-form-item label="材料:">
-              <el-input v-model="postForm.material" />
-            </el-form-item>
-
-            <el-form-item label="打包方式:">
-              <el-input v-model="postForm.pack" />
-            </el-form-item>
-
-            <el-form-item label="装箱量:">
-              <el-input v-model="postForm.qty" />
-            </el-form-item>
-
-            <el-form-item label="准备时间:">
-              <el-input v-model="postForm.timer" />
             </el-form-item>
 
             <div class="postInfo-container">
@@ -88,22 +68,17 @@
           <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}words</span>
         </el-form-item>
 
-        <el-form-item prop="content" label="商品描述:" style="margin-bottom: 30px;">
+        <el-form-item prop="content" label="项目描述:" style="margin-bottom: 30px;">
           <el-input v-model="postForm.content" type="textarea" :autosize="{ minRows: 8, maxRows: 12}" placeholder="编辑内容" />
         </el-form-item>
 
-        <el-form-item prop="image_uri" label="商品封面图" style="margin-bottom: 30px;">
+        <el-form-item prop="content" label="项目外链:" style="margin-bottom: 30px;">
+          <el-input v-model="postForm.project_url" type="textarea" :autosize="{ minRows: 1, maxRows: 2}" placeholder="编辑内容" />
+        </el-form-item>
+
+        <el-form-item prop="image_uri" label="项目封面图" style="margin-bottom: 30px;">
           <el-button size="small" type="primary" @click="dialogCoverVisible = true; dialogStatus = 1">链接添加</el-button>
           <Upload v-model="postForm.cover_img" />
-        </el-form-item>
-
-        <el-form-item prop="content" label="轮播视频链接" style="margin-bottom: 30px;">
-          <el-input v-model="postForm.video_url" />
-        </el-form-item>
-
-        <el-form-item prop="image_uri" label="轮播视频封面" style="margin-bottom: 30px;">
-          <el-button size="small" type="primary" @click="dialogCoverVisible = true; dialogStatus = 2">链接添加</el-button>
-          <Upload v-model="postForm.video_img" />
         </el-form-item>
 
         <el-form-item prop="content" style="margin-bottom: 30px;">
@@ -175,20 +150,16 @@ import { fetchList } from '@/api/classify'
 const defaultForm = {
   id: undefined,
   status: 1,
-  title: '', // 商品名
-  content: '', // 商品描述
+  title: '', // 项目名
+  content: '', // 描述描述
   excerpt: '', // 短描述
-  size: '', // 尺寸
   project_body: '',
   video_url: '',
   video_img: '',
-  material: '', // 材料
-  pack: '', // 打包方式
-  qty: '', // 装箱量
-  timer: '', // 准备时长
   cover_img: '', // 封面图
   img_list: [], // 图片数组
   video_list: [], // ytb链接数组
+  project_url: '', // 项目外链
   tags: [], // 标签数组
   classify_id: undefined,
   classify: {
@@ -266,12 +237,12 @@ export default {
       })
     },
     setTagsViewTitle() {
-      const title = '编辑商品'
+      const title = '编辑项目'
       const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.postForm.id}` })
       this.$store.dispatch('tagsView/updateVisitedView', route)
     },
     setPageTitle() {
-      const title = '编辑商品'
+      const title = '编辑项目'
       document.title = `${title} - ${this.postForm.id}`
     },
     // 提交信息，直接上架
@@ -298,7 +269,7 @@ export default {
         }
       })
     },
-    // 草稿，为下架商品
+    // 草稿，为下架项目
     draftForm() {
       if (this.postForm.excerpt.length === 0 || this.postForm.title.length === 0) {
         this.$message({
@@ -329,7 +300,7 @@ export default {
         this.$router.go(-1)
         this.$notify({
           title: '成功',
-          message: '发布商品成功',
+          message: '发布项目成功',
           type: 'success',
           duration: 2000
         })
@@ -350,7 +321,7 @@ export default {
         this.$router.go(-1)
         this.$notify({
           title: '成功',
-          message: '更新商品成功',
+          message: '更新项目成功',
           type: 'success',
           duration: 2000
         })

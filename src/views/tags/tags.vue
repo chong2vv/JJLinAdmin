@@ -16,28 +16,6 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="100" label="图标">
-        <template slot-scope="{row}">
-          <el-image :src="row.image_url" :preview-src-list="[row.image_url]">
-            <div slot="placeholder" class="image-slot">
-              加载中<span class="dot">...</span>
-            </div>
-          </el-image>
-        </template>
-      </el-table-column>
-
-      <el-table-column min-width="120px" label="备注">
-        <template slot-scope="{row}">
-          <span>{{ row.remark }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column min-width="50px" label="跳转类型">
-        <template slot-scope="{row}">
-          <span>{{ row.type | typeFilter }}</span>
-        </template>
-      </el-table-column>
-
       <el-table-column align="center" label="状态" width="200">
         <template slot-scope="{row}">
           <el-tag v-if="row.status === 1" type="success" effect="dark">使用中</el-tag>
@@ -77,26 +55,6 @@
             <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
-        <el-form-item label="跳转类型">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
-        </el-form-item>
-        <el-form-item size="medium" label="图片">
-          <el-upload
-            style="width: 300px; height: 300px;"
-            :action="GLOBAL.base_upload_url"
-            :show-file-list="false"
-            :on-success="handleUploadSuccess"
-            :before-upload="beforeUpload"
-          >
-            <el-image v-if="temp.image_url" :src="temp.image_url" />
-            <i v-else class="el-icon-plus" />
-          </el-upload>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -111,11 +69,11 @@
 </template>
 
 <script>
-import { fetchList, createCategories, updateCategories } from '@/api/categories'
+import { fetchList, createTags, updateTags } from '@/api/tags'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
-  name: 'CategoriesEditTable',
+  name: 'TagsEditTable',
   components: { Pagination },
   filters: {
     statusFilter(status) {
@@ -125,14 +83,6 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
-    },
-    typeFilter(type) {
-      const typeMap = {
-        0: '默认页面',
-        1: '随心记',
-        2: '悄悄话'
-      }
-      return typeMap[type]
     }
   },
   data() {
@@ -147,10 +97,7 @@ export default {
       temp: {
         id: undefined,
         title: '',
-        status: 1,
-        image_url: '',
-        type: 0,
-        remark: ''
+        status: 1
       },
       textMap: {
         update: 'Edit',
@@ -164,20 +111,6 @@ export default {
         {
           value: 0,
           label: '禁用'
-        }
-      ],
-      typeOptions: [
-        {
-          value: 0,
-          label: '默认页面'
-        },
-        {
-          value: 1,
-          label: '随心记'
-        },
-        {
-          value: 2,
-          label: '悄悄话'
         }
       ],
       dialogFormVisible: false,
@@ -198,10 +131,7 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        remark: '',
         title: '',
-        image_url: '',
-        type: 0,
         status: 1
       }
     },
@@ -231,7 +161,7 @@ export default {
         if (valid) {
           this.listLoading = true
           const self = this
-          createCategories(this.temp).then(response => {
+          createTags(this.temp).then(response => {
             self.listLoading = false
             self.list.unshift(response.data)
             self.dialogFormVisible = false
@@ -252,7 +182,7 @@ export default {
     updateData() {
       const self = this
       const tempData = Object.assign({}, this.temp)
-      updateCategories(tempData).then(() => {
+      updateTags(tempData).then(() => {
         const index = this.list.findIndex(v => v.id === this.temp.id)
         this.temp.edit = false
         self.list.splice(index, 1, this.temp) // //成功后替换
@@ -265,13 +195,6 @@ export default {
           duration: 2000
         })
       })
-    },
-    handleUploadSuccess(res, file) {
-      if (res.data[0]) {
-        this.temp.image_url = res.data[0]
-      }
-    },
-    beforeUpload(file) {
     }
   }
 }

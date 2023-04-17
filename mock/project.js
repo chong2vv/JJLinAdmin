@@ -3,7 +3,7 @@ const Mock = require('mockjs')
 const List = []
 const count = 100
 
-const baseContent = '我是商品的描述我是商品的描述我是商品的描述我是商品的描述我是商品的描述我是商品的描述我是商品的描述我是商品的描述我是商品的描述我是商品的描述'
+const baseContent = '我是项目的描述我是项目的描述我是项目的描述我是项目的描述我是项目的描述我是项目的描述我是项目的描述我是项目的描述我是项目的描述我是项目的描述'
 const image_uri = 'https://wpimg.wallstcn.com/e4558086-631c-425c-9430-56ffb46e70b3'
 
 for (let i = 0; i < count; i++) {

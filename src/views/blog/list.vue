@@ -92,7 +92,7 @@
 
 <script>
 import { fetchList, updateArticleStatus } from '@/api/article'
-import { fetchList as fetchClassList } from '@/api/classify'
+import { fetchList as fetchClassList } from '@/api/categories'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import waves from '@/directive/waves'
 

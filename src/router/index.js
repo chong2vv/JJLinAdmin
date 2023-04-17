@@ -70,7 +70,7 @@ export const constantRoutes = [
   },
 
   {
-    path: '/categories',
+    path: '/categories.js',
     component: Layout,
     children: [
       {
@@ -149,6 +149,19 @@ export const constantRoutes = [
         name: 'EditProject',
         meta: { title: '编辑项目', noCache: true, activeMenu: '/project/project' },
         hidden: true
+      }
+    ]
+  },
+
+  {
+    path: '/tags',
+    component: Layout,
+    children: [
+      {
+        path: 'tags',
+        name: 'tags',
+        component: () => import('@/views/tags/tags'),
+        meta: { title: '热门标签', icon: 'table' }
       }
     ]
   },
