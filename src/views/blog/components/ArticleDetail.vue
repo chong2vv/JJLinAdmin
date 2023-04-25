@@ -40,6 +40,15 @@
                   <el-option v-for="item in classListOptions" :key="item.id" :label="item.title" :value="item" />
                 </el-select>
               </el-form-item>
+              <el-form-item label-width="120px" label="首页展示:" class="postInfo-container-item">
+                <el-switch
+                  v-model="postForm.is_home_list"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  active-value="1"
+                  inactive-value="0"
+                />
+              </el-form-item>
             </el-col>
           </el-row>
         </div>
@@ -177,6 +186,7 @@ const defaultForm = {
     image_url: ''
   }, // 分类
   author: '',
+  is_home_list: 0,
   view: ''
 }
 
