@@ -203,7 +203,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'message',
         component: () => import('@/views/message/index'),
-        meta: { title: '悄悄话', icon: 'email' }
+        meta: { title: '留言', icon: 'email' }
       }
     ]
   },
