@@ -84,6 +84,10 @@
           <Tinymce ref="editor" v-model="postForm.content" :height="400" />
         </el-form-item>
 
+        <div class="editor-container">
+          <markdown-editor v-model="postForm.mark_content" height="300px" />
+        </div>
+
         <el-form-item prop="img" label="封面图" style="margin-bottom: 30px;">
           <el-button size="small" type="primary" @click="dialogCoverVisible = true; dialogStatus = 1">链接添加</el-button>
           <Upload v-model="postForm.img" />
@@ -159,6 +163,7 @@
 <script>
 import Tinymce from '@/components/Tinymce'
 import MDinput from '@/components/MDinput'
+import MarkdownEditor from '@/components/MarkdownEditor'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { validURL } from '@/utils/validate'
 import { createArticle, fetchArticle, updateArticle } from '@/api/article'
@@ -180,6 +185,7 @@ const defaultForm = {
   video_list: [], // ytb链接数组
   tags: [], // 标签数组
   classify_id: undefined,
+  mark_content: undefined,
   categories: {
     id: undefined,
     title: '',
@@ -192,7 +198,7 @@ const defaultForm = {
 
 export default {
   name: 'ArticleDetail',
-  components: { Tinymce, MDinput, Sticky, Upload, 'el-image-viewer': () => import('element-ui/packages/image/src/image-viewer') },
+  components: { Tinymce, MDinput, Sticky, Upload, MarkdownEditor, 'el-image-viewer': () => import('element-ui/packages/image/src/image-viewer') },
   props: {
     isEdit: {
       type: Boolean,
@@ -522,5 +528,9 @@ export default {
     border-radius: 0px;
     border-bottom: 1px solid #bfcbd9;
   }
+}
+
+.editor-container{
+  margin-bottom: 30px;
 }
 </style>
