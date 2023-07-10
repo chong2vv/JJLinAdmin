@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'YD Blog Admin',
+  title: 'YD JJLin Admin',
 
   /**
    * @type {boolean} true | false

@@ -69,141 +69,141 @@ export const constantRoutes = [
     ]
   },
 
-  {
-    path: '/categories.js',
-    component: Layout,
-    children: [
-      {
-        path: 'categories',
-        name: 'categories',
-        component: () => import('@/views/categories/categories'),
-        meta: { title: '分类', icon: 'table' }
-      }
-    ]
-  },
+  // {
+  //   path: '/categories.js',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'categories',
+  //       name: 'categories',
+  //       component: () => import('@/views/categories/categories'),
+  //       meta: { title: '分类', icon: 'table' }
+  //     }
+  //   ]
+  // },
+  //
+  // {
+  //   path: '/blog',
+  //   component: Layout,
+  //   name: 'Blog',
+  //   redirect: '/blog/list',
+  //   meta: { title: '文章', icon: 'documentation' },
+  //   children: [
+  //     {
+  //       path: 'list',
+  //       name: 'ArticleList',
+  //       component: () => import('@/views/blog/list'),
+  //       meta: { title: '文章列表', icon: 'nested' }
+  //     },
+  //     {
+  //       path: 'create',
+  //       name: 'CreateArticle',
+  //       component: () => import('@/views/blog/create'),
+  //       meta: { title: '创建文章', icon: 'tree' }
+  //     },
+  //     {
+  //       path: 'edit/:id(\\d+)',
+  //       component: () => import('@/views/blog/edit'),
+  //       name: 'EditArticle',
+  //       meta: { title: '编辑文章', noCache: true, activeMenu: '/blog/blog' },
+  //       hidden: true
+  //     }
+  //   ]
+  // },
+  //
+  // {
+  //   path: '/classify',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'classify',
+  //       name: 'classify',
+  //       component: () => import('@/views/classify/classify'),
+  //       meta: { title: '模块', icon: 'table' }
+  //     }
+  //   ]
+  // },
+  //
+  // {
+  //   path: '/project',
+  //   component: Layout,
+  //   name: 'Project',
+  //   redirect: '/project/list',
+  //   meta: { title: '项目', icon: 'documentation' },
+  //   children: [
+  //     {
+  //       path: 'list',
+  //       name: 'ProjectList',
+  //       component: () => import('@/views/project/list'),
+  //       meta: { title: '项目列表', icon: 'nested' }
+  //     },
+  //     {
+  //       path: 'create',
+  //       name: 'CreateProject',
+  //       component: () => import('@/views/project/create'),
+  //       meta: { title: '创建项目', icon: 'tree' }
+  //     },
+  //     {
+  //       path: 'edit/:id(\\d+)',
+  //       component: () => import('@/views/project/edit'),
+  //       name: 'EditProject',
+  //       meta: { title: '编辑项目', noCache: true, activeMenu: '/project/project' },
+  //       hidden: true
+  //     }
+  //   ]
+  // },
+  //
+  // {
+  //   path: '/tags',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'tags',
+  //       name: 'tags',
+  //       component: () => import('@/views/tags/tags'),
+  //       meta: { title: '热门标签', icon: 'table' }
+  //     }
+  //   ]
+  // },
+  //
+  // {
+  //   path: '/diary',
+  //   component: Layout,
+  //   name: 'Diary',
+  //   redirect: '/diary/list',
+  //   meta: { title: '随手记', icon: 'documentation' },
+  //   children: [
+  //     {
+  //       path: 'list',
+  //       name: 'DiaryList',
+  //       component: () => import('@/views/diary/list'),
+  //       meta: { title: '日记列表', icon: 'nested' }
+  //     },
+  //     {
+  //       path: 'create',
+  //       name: 'CreateDiary',
+  //       component: () => import('@/views/diary/create'),
+  //       meta: { title: '创建日记', icon: 'tree' }
+  //     },
+  //     {
+  //       path: 'edit/:id(\\d+)',
+  //       component: () => import('@/views/diary/edit'),
+  //       name: 'EditDiary',
+  //       meta: { title: '编辑日记', noCache: true, activeMenu: '/diary/diary' },
+  //       hidden: true
+  //     }
+  //   ]
+  // },
 
   {
-    path: '/blog',
-    component: Layout,
-    name: 'Blog',
-    redirect: '/blog/list',
-    meta: { title: '文章', icon: 'documentation' },
-    children: [
-      {
-        path: 'list',
-        name: 'ArticleList',
-        component: () => import('@/views/blog/list'),
-        meta: { title: '文章列表', icon: 'nested' }
-      },
-      {
-        path: 'create',
-        name: 'CreateArticle',
-        component: () => import('@/views/blog/create'),
-        meta: { title: '创建文章', icon: 'tree' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/blog/edit'),
-        name: 'EditArticle',
-        meta: { title: '编辑文章', noCache: true, activeMenu: '/blog/blog' },
-        hidden: true
-      }
-    ]
-  },
-
-  {
-    path: '/classify',
-    component: Layout,
-    children: [
-      {
-        path: 'classify',
-        name: 'classify',
-        component: () => import('@/views/classify/classify'),
-        meta: { title: '模块', icon: 'table' }
-      }
-    ]
-  },
-
-  {
-    path: '/project',
-    component: Layout,
-    name: 'Project',
-    redirect: '/project/list',
-    meta: { title: '项目', icon: 'documentation' },
-    children: [
-      {
-        path: 'list',
-        name: 'ProjectList',
-        component: () => import('@/views/project/list'),
-        meta: { title: '项目列表', icon: 'nested' }
-      },
-      {
-        path: 'create',
-        name: 'CreateProject',
-        component: () => import('@/views/project/create'),
-        meta: { title: '创建项目', icon: 'tree' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/project/edit'),
-        name: 'EditProject',
-        meta: { title: '编辑项目', noCache: true, activeMenu: '/project/project' },
-        hidden: true
-      }
-    ]
-  },
-
-  {
-    path: '/tags',
-    component: Layout,
-    children: [
-      {
-        path: 'tags',
-        name: 'tags',
-        component: () => import('@/views/tags/tags'),
-        meta: { title: '热门标签', icon: 'table' }
-      }
-    ]
-  },
-
-  {
-    path: '/diary',
-    component: Layout,
-    name: 'Diary',
-    redirect: '/diary/list',
-    meta: { title: '随手记', icon: 'documentation' },
-    children: [
-      {
-        path: 'list',
-        name: 'DiaryList',
-        component: () => import('@/views/diary/list'),
-        meta: { title: '日记列表', icon: 'nested' }
-      },
-      {
-        path: 'create',
-        name: 'CreateDiary',
-        component: () => import('@/views/diary/create'),
-        meta: { title: '创建日记', icon: 'tree' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/diary/edit'),
-        name: 'EditDiary',
-        meta: { title: '编辑日记', noCache: true, activeMenu: '/diary/diary' },
-        hidden: true
-      }
-    ]
-  },
-
-  {
-    path: '/message',
+    path: '/question',
     component: Layout,
     children: [
       {
         path: 'index',
-        name: 'message',
-        component: () => import('@/views/message/index'),
-        meta: { title: '留言', icon: 'email' }
+        name: 'question',
+        component: () => import('@/views/question/index'),
+        meta: { title: '答题', icon: 'email' }
       }
     ]
   },

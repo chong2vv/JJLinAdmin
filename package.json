@@ -1,7 +1,7 @@
 {
-  "name": "Blog_Admin",
+  "name": "JJLin_Admin",
   "version": "4.4.0",
-  "description": "Blog Admin",
+  "description": "JJLin Admin",
   "author": "wyd<chong2vv@gmail.com>",
   "scripts": {
     "dev": "vue-cli-service serve",
@@ -90,7 +90,7 @@
     "admin",
     "dashboard",
     "element-ui",
-    "blog",
+    "JJLin",
     "admin-template",
     "management-system"
   ],
